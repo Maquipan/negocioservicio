@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimarket - Cliente</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #f0f2f5; font-family: 'Segoe UI', sans-serif; }
+        .hero-section {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://placehold.co/1200x400/1e272e/fff?text=Minimarket+24/7');
+            background-size: cover; color: white; padding: 60px 0; text-align: center; border-bottom: 4px solid #00d2d3; margin-bottom: 30px;
+        }
+        .card { border: none; border-radius: 12px; transition: all 0.3s; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .card-img-wrapper { height: 180px; display: flex; align-items: center; justify-content: center; padding: 10px; border-bottom: 1px solid #f0f0f0; }
+        .card-img-top { max-height: 100%; max-width: 100%; object-fit: contain; }
+        .price-tag { color: #2e86de; font-size: 1.3rem; font-weight: 800; }
+        .stock-badge { position: absolute; top: 10px; left: 10px; font-size: 0.8rem; }
+        .btn-add { background-color: #10ac84; color: white; border: none; font-weight: 600; }
+        .btn-add:hover { background-color: #1dd1a1; color: white; }
+        .user-avatar { width: 30px; height: 30px; border-radius: 50%; margin-right: 8px; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-info" href="#"><i class="fas fa-cloud"></i> Market Cloud</a>
+            
+            <div class="d-flex align-items-center ms-auto">
+                <div id="user-info" class="d-none text-white me-3 align-items-center">
+                    <img id="user-photo" src="" class="user-avatar">
+                    <span id="user-name" class="me-2 small">Usuario</span>
+                    <button onclick="window.logout()" class="btn btn-sm btn-outline-danger"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+                <div id="login-btn">
+                    <button onclick="window.loginGoogle()" class="btn btn-sm btn-outline-info me-3"><i class="fab fa-google"></i> Ingresar</button>
+                </div>
+
+                <button class="btn btn-outline-light position-relative" data-bs-toggle="modal" data-bs-target="#cartModal" onclick="window.reiniciarModal()">
+                    <i class="fas fa-shopping-cart"></i> 
+                    <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero-section">
+        <div class="container">
+            <h2 class="fw-bold">Stock en Tiempo Real</h2>
+            <p class="mb-0 text-white-50">Inicia sesión para comprar</p>
+        </div>
+    </header>
+
+    <main class="container mb-5">
+        <div class="input-group mb-4">
+            <span class="input-group-text"><i class="fas fa-search"></i></span>
+            <input type="text" id="searchInput" class="form-control" placeholder="Buscar producto...">
+        </div>
+        <div id="product-container" class="row g-4"></div>
+    </main>
+
+    <div class="modal fade" id="cartModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-info">
+                    <h5 class="modal-title fw-bold text-white" id="modalTitle">Tu Carrito</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="cart-view">
+                        <table class="table align-middle">
+                            <tbody id="cart-items"></tbody>
+                        </table>
+                        <div class="text-end pt-3 border-top">
+                            <h4>Total: <span id="cart-total" class="text-primary fw-bold">$0</span></h4>
+                        </div>
+                    </div>
+                    <div id="bank-details" class="d-none">
+                        <div class="alert alert-success text-center">
+                            <i class="fas fa-check-circle"></i> Stock reservado. Transfiere a:
+                        </div>
+                        <div class="card bg-light border-0 shadow-sm p-3">
+                            <h5 class="text-primary fw-bold mb-3">Banco Tenpo</h5>
+                            <p class="mb-1"><strong>Nombre:</strong> CRISTIAN ANDRES PIMENTEL MANCILLA</p>
+                            <p class="mb-1"><strong>RUT:</strong> 16972068-1 <button class="btn btn-sm btn-outline-secondary ms-2" onclick="window.copiarTexto('16972068-1')"><i class="fas fa-copy"></i></button></p>
+                            <p class="mb-1"><strong>Cuenta:</strong> 111116972068 <button class="btn btn-sm btn-outline-secondary ms-2" onclick="window.copiarTexto('111116972068')"><i class="fas fa-copy"></i></button></p>
+                            <p class="mb-0"><strong>Correo:</strong> cpimentel@maquipan.cl</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <div id="footer-cart" class="w-100 d-flex justify-content-end">
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary fw-bold" onclick="window.mostrarDatosPago()">
+                            <i class="fas fa-money-bill-wave"></i> Ir a Pagar
+                        </button>
+                    </div>
+                    <div id="footer-bank" class="w-100 d-flex justify-content-between d-none">
+                        <button type="button" class="btn btn-outline-secondary" onclick="window.reiniciarModal()">Volver</button>
+                        <button type="button" class="btn btn-success fw-bold" onclick="window.finalizarCompra()">
+                            <i class="fab fa-whatsapp"></i> Confirmar Transferencia
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, doc, increment, writeBatch, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        // IMPORTAMOS AUTH
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDLPcKBki7SgEDqGoU2zGmvynmdRIaqYOA",
+            authDomain: "negocio-30867.firebaseapp.com",
+            projectId: "negocio-30867",
+            storageBucket: "negocio-30867.firebasestorage.app",
+            messagingSenderId: "164146774814",
+            appId: "1:164146774814:web:19aba62c4a8314ad873f0f"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        let inventario = [];
+        let carrito = JSON.parse(localStorage.getItem('carrito_firebase')) || [];
+        let usuarioActual = null;
+        const formatoCLP = new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' });
+
+        // --- AUTH LOGIC ---
+        window.loginGoogle = () => {
+            signInWithPopup(auth, provider).catch((error) => console.error(error));
+        };
+
+        window.logout = () => {
+            signOut(auth).then(() => {
+                alert("Sesión cerrada");
+                location.reload();
+            });
+        };
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                usuarioActual = user;
+                document.getElementById('login-btn').classList.add('d-none');
+                document.getElementById('user-info').classList.remove('d-none');
+                document.getElementById('user-info').classList.add('d-flex');
+                document.getElementById('user-name').innerText = user.displayName.split(' ')[0];
+                document.getElementById('user-photo').src = user.photoURL;
+            } else {
+                usuarioActual = null;
+                document.getElementById('login-btn').classList.remove('d-none');
+                document.getElementById('user-info').classList.add('d-none');
+                document.getElementById('user-info').classList.remove('d-flex');
+            }
+        });
+
+        // --- FIRESTORE ---
+        const productosRef = collection(db, "productos");
+        onSnapshot(productosRef, (snapshot) => {
+            inventario = [];
+            snapshot.forEach((doc) => { inventario.push({ id: doc.id, ...doc.data() }); });
+            renderizarProductos();
+        });
+
+        function renderizarProductos() {
+            const container = document.getElementById('product-container');
+            const termino = document.getElementById('searchInput').value.toLowerCase();
+            container.innerHTML = '';
+
+            inventario.filter(p => p.nombre.toLowerCase().includes(termino)).forEach(prod => {
+                const enCarrito = carrito.find(c => c.id === prod.id)?.cantidad || 0;
+                const stockReal = prod.stock - enCarrito;
+                const sinStock = stockReal <= 0;
+
+                container.innerHTML += `
+                    <div class="col-6 col-md-4 col-lg-3">
+                        <div class="card h-100 ${sinStock ? 'opacity-75' : ''}">
+                            <span class="badge ${prod.stock < 5 ? 'bg-danger' : 'bg-success'} stock-badge">Stock: ${prod.stock}</span>
+                            <div class="card-img-wrapper"><img src="${prod.img}" class="card-img-top"></div>
+                            <div class="card-body d-flex flex-column">
+                                <h6 class="card-title fw-bold text-truncate">${prod.nombre}</h6>
+                                <p class="price-tag mb-1">${formatoCLP.format(prod.precio)}</p>
+                                <button class="btn ${sinStock ? 'btn-secondary' : 'btn-add'} mt-auto w-100 rounded-pill" 
+                                    ${sinStock ? 'disabled' : `onclick="window.agregarAlCarrito('${prod.id}')"`}>
+                                    ${sinStock ? 'Agotado' : 'Agregar'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+            actualizarIconoCarrito();
+        }
+
+        window.agregarAlCarrito = (id) => {
+            const prod = inventario.find(p => p.id === id);
+            const item = carrito.find(c => c.id === id);
+            const cantActual = item ? item.cantidad : 0;
+            if (cantActual >= prod.stock) return alert("No hay más stock disponible.");
+            if (item) item.cantidad++; else carrito.push({ id: prod.id, nombre: prod.nombre, precio: prod.precio, cantidad: 1 });
+            guardarCarritoLocal();
+            renderizarProductos();
+        };
+
+        window.eliminarItem = (index) => {
+            carrito.splice(index, 1);
+            guardarCarritoLocal();
+            renderizarProductos();
+            window.actualizarModalCarrito();
+        };
+
+        window.mostrarDatosPago = () => {
+            if (!usuarioActual) {
+                alert("Debes iniciar sesión con Google para poder comprar.");
+                window.loginGoogle();
+                return;
+            }
+            if (carrito.length === 0) return alert("Carrito vacío");
+            document.getElementById('cart-view').classList.add('d-none');
+            document.getElementById('footer-cart').classList.add('d-none');
+            document.getElementById('bank-details').classList.remove('d-none');
+            document.getElementById('footer-bank').classList.remove('d-none');
+        };
+
+        window.reiniciarModal = () => {
+            document.getElementById('cart-view').classList.remove('d-none');
+            document.getElementById('footer-cart').classList.remove('d-none');
+            document.getElementById('bank-details').classList.add('d-none');
+            document.getElementById('footer-bank').classList.add('d-none');
+        };
+
+        window.copiarTexto = (t) => navigator.clipboard.writeText(t).then(() => alert("Copiado"));
+
+        window.finalizarCompra = async () => {
+            const batch = writeBatch(db);
+            let total = 0;
+            let detalleVenta = [];
+
+            // 1. Preparamos descuento de stock y datos para guardar
+            carrito.forEach(item => {
+                const ref = doc(db, "productos", item.id);
+                batch.update(ref, { stock: increment(-item.cantidad) });
+                total += item.precio * item.cantidad;
+                detalleVenta.push({ producto: item.nombre, cantidad: item.cantidad, precio: item.precio });
+            });
+
+            // 2. Preparamos el registro de la venta en la colección "ventas"
+            const nuevaVenta = {
+                usuario_uid: usuarioActual.uid,
+                usuario_nombre: usuarioActual.displayName,
+                usuario_email: usuarioActual.email,
+                fecha: serverTimestamp(),
+                total: total,
+                detalle: detalleVenta
+            };
+
+            try {
+                // Ejecutamos todo
+                await batch.commit(); // Descuenta stock
+                await addDoc(collection(db, "ventas"), nuevaVenta); // Guarda historial
+
+                // Mensaje WhatsApp
+                let mensaje = `*PEDIDO WEB CONFIRMADO*%0ACliente: ${usuarioActual.displayName}%0A%0A`;
+                detalleVenta.forEach(d => mensaje += `${d.cantidad} x ${d.producto}%0A`);
+                mensaje += `%0ATotal: ${formatoCLP.format(total)}%0A(Transferencia Enviada)`;
+                
+                // Limpieza
+                carrito = [];
+                guardarCarritoLocal();
+                bootstrap.Modal.getInstance(document.getElementById('cartModal')).hide();
+                window.reiniciarModal();
+                
+                window.open(`https://wa.me/56912345678?text=${mensaje}`, '_blank');
+            } catch (error) {
+                alert("Error: " + error.message);
+            }
+        };
+
+        function guardarCarritoLocal() { localStorage.setItem('carrito_firebase', JSON.stringify(carrito)); actualizarIconoCarrito(); }
+        function actualizarIconoCarrito() { document.getElementById('cart-count').innerText = carrito.reduce((acc, item) => acc + item.cantidad, 0); window.actualizarModalCarrito(); }
+        
+        window.actualizarModalCarrito = () => {
+            const tbody = document.getElementById('cart-items');
+            let total = 0; tbody.innerHTML = '';
+            carrito.forEach((item, index) => {
+                const sub = item.precio * item.cantidad; total += sub;
+                tbody.innerHTML += `<tr><td>${item.nombre}</td><td>${item.cantidad}</td><td>${formatoCLP.format(sub)}</td><td><button class="btn btn-sm text-danger" onclick="window.eliminarItem(${index})"><i class="fas fa-trash"></i></button></td></tr>`;
+            });
+            document.getElementById('cart-total').innerText = formatoCLP.format(total);
+        };
+        document.getElementById('searchInput').addEventListener('input', renderizarProductos);
+    </script>
+</body>
+</html>
