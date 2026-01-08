@@ -15,7 +15,6 @@
         .login-card { max-width: 400px; margin: -50px auto 20px; z-index: 10; position: relative; }
         .card-img-top { height: 160px; object-fit: contain; padding: 10px; }
         .price-tag { color: #10ac84; font-weight: 800; font-size: 1.2rem; }
-        /* Estilo para el campo mejoras */
         .mejoras-tag { font-size: 0.85rem; color: #e67e22; background: #fff3e0; padding: 2px 8px; border-radius: 10px; margin-bottom: 5px; display: inline-block;}
     </style>
 </head>
@@ -26,7 +25,12 @@
             <a class="navbar-brand fw-bold text-info" href="#"><i class="fas fa-cloud"></i> Market Cloud</a>
             <div class="d-flex align-items-center">
                 <span id="user-display" class="text-white me-3 small"></span>
-                <button id="btn-logout" onclick="window.logout()" class="btn btn-sm btn-outline-danger d-none me-2">Salir</button>
+                
+                <div id="user-actions" class="d-none me-2">
+                    <button onclick="window.abrirModalPassword()" class="btn btn-sm btn-outline-warning" title="Cambiar Contraseña"><i class="fas fa-key"></i></button>
+                    <button onclick="window.logout()" class="btn btn-sm btn-outline-danger" title="Salir"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+
                 <button class="btn btn-outline-light position-relative" data-bs-toggle="modal" data-bs-target="#cartModal">
                     <i class="fas fa-shopping-cart"></i> 
                     <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
@@ -99,11 +103,38 @@
         </div>
     </div>
 
+    <div class="modal fade" id="passwordModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-key"></i> Cambiar Contraseña</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="change-pass-form">
+                        <div class="mb-3">
+                            <label class="form-label">Nueva Contraseña</label>
+                            <input type="password" id="new-password" class="form-control" required minlength="6">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Repetir Nueva Contraseña</label>
+                            <input type="password" id="confirm-password" class="form-control" required minlength="6">
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-dark">Actualizar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, onSnapshot, doc, increment, writeBatch, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        // Importamos updatePassword
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, updatePassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDLPcKBki7SgEDqGoU2zGmvynmdRIaqYOA",
@@ -138,15 +169,58 @@
                 usuario = user;
                 document.getElementById('login-container').classList.add('d-none');
                 document.getElementById('catalog-section').classList.remove('d-none');
-                document.getElementById('btn-logout').classList.remove('d-none');
+                document.getElementById('user-actions').classList.remove('d-none'); // Mostrar botones
                 document.getElementById('user-display').innerText = "Hola, " + user.displayName;
                 cargarProductos();
             } else {
                 usuario = null;
                 document.getElementById('login-container').classList.remove('d-none');
                 document.getElementById('catalog-section').classList.add('d-none');
-                document.getElementById('btn-logout').classList.add('d-none');
+                document.getElementById('user-actions').classList.add('d-none'); // Ocultar botones
                 document.getElementById('user-display').innerText = "";
+            }
+        });
+
+        // --- LÓGICA DE CAMBIO DE CONTRASEÑA ---
+        window.abrirModalPassword = () => {
+            const modal = new bootstrap.Modal(document.getElementById('passwordModal'));
+            modal.show();
+        };
+
+        document.getElementById('change-pass-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const p1 = document.getElementById('new-password').value;
+            const p2 = document.getElementById('confirm-password').value;
+
+            if (p1 !== p2) {
+                alert("Las contraseñas no coinciden.");
+                return;
+            }
+
+            if (p1.length < 6) {
+                alert("La contraseña debe tener al menos 6 caracteres.");
+                return;
+            }
+
+            try {
+                // Función de Firebase para actualizar clave
+                await updatePassword(auth.currentUser, p1);
+                
+                alert("¡Contraseña actualizada correctamente!");
+                // Cerramos modal y limpiamos
+                const modalEl = document.getElementById('passwordModal');
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                modal.hide();
+                document.getElementById('change-pass-form').reset();
+
+            } catch (error) {
+                console.error(error);
+                if (error.code === 'auth/requires-recent-login') {
+                    alert("Por seguridad, como hace mucho iniciaste sesión, debes SALIR y volver a ENTRAR para cambiar tu clave.");
+                    window.logout();
+                } else {
+                    alert("Error al cambiar contraseña: " + error.message);
+                }
             }
         });
 
@@ -161,8 +235,6 @@
                     inventario.push(p);
                     const enCarro = carrito.find(c=>c.id==p.id)?.cantidad||0;
                     const stockDisponible = p.stock - enCarro;
-                    
-                    // Si hay mejoras, mostramos la etiqueta
                     const mejorasHtml = p.mejoras ? `<div class="mejoras-tag"><i class="fas fa-star text-warning"></i> ${p.mejoras}</div>` : '';
 
                     div.innerHTML += `
@@ -174,18 +246,15 @@
                                     <h6 class="fw-bold text-truncate mb-1">${p.nombre}</h6>
                                     ${mejorasHtml}
                                     <div class="price-tag mb-2">${clp.format(p.precio)}</div>
-                                    
                                     <div class="mt-auto">
                                         <div class="input-group mb-2">
                                             <button class="btn btn-outline-secondary btn-sm" onclick="window.cambiarCant('${p.id}', -1)">-</button>
                                             <input type="number" id="qty-${p.id}" class="form-control form-control-sm text-center bg-white" value="1" readonly>
                                             <button class="btn btn-outline-secondary btn-sm" onclick="window.cambiarCant('${p.id}', 1)">+</button>
                                         </div>
-
                                         <button class="btn btn-sm w-100 fw-bold ${stockDisponible<=0?'btn-secondary':'btn-primary'}" 
-                                            ${stockDisponible<=0?'disabled':''} 
-                                            onclick="window.add('${p.id}')">
-                                            ${stockDisponible<=0 ? 'Agotado' : 'Agregar al Carro'}
+                                            ${stockDisponible<=0?'disabled':''} onclick="window.add('${p.id}')">
+                                            ${stockDisponible<=0 ? 'Agotado' : 'Agregar'}
                                         </button>
                                     </div>
                                 </div>
@@ -196,19 +265,14 @@
             });
         }
 
-        // CONTROLAR INPUT DE CANTIDAD (+ / -)
         window.cambiarCant = (id, delta) => {
             const input = document.getElementById('qty-'+id);
             let val = parseInt(input.value) + delta;
-            
-            // Validaciones: Mínimo 1, Máximo el stock disponible
             const prod = inventario.find(p => p.id === id);
             const enCarro = carrito.find(c => c.id === id)?.cantidad || 0;
             const max = prod.stock - enCarro;
-
             if (val < 1) val = 1;
-            if (val > max && max > 0) val = max; // No dejar subir más del stock
-            
+            if (val > max && max > 0) val = max;
             input.value = val;
         };
 
@@ -216,22 +280,13 @@
         window.add = (id) => {
             const p = inventario.find(x=>x.id==id);
             const item = carrito.find(x=>x.id==id);
-            
-            // Leemos la cantidad del input
             const cantidadDeseada = parseInt(document.getElementById('qty-'+id).value);
-
-            // Validamos stock total
             const cantidadActual = item ? item.cantidad : 0;
-            if ((cantidadActual + cantidadDeseada) > p.stock) {
-                return alert("No hay suficiente stock para agregar esa cantidad.");
-            }
+            if ((cantidadActual + cantidadDeseada) > p.stock) return alert("No hay suficiente stock.");
 
             if(item) item.cantidad += cantidadDeseada; 
             else carrito.push({id:p.id, nombre:p.nombre, precio:p.precio, cantidad: cantidadDeseada});
-            
-            // Reseteamos el input a 1 visualmente
             document.getElementById('qty-'+id).value = 1;
-            
             saveCart();
         };
 
@@ -243,12 +298,7 @@
             let total=0, html='';
             carrito.forEach((c,i) => {
                 total += c.precio*c.cantidad;
-                html += `<tr>
-                    <td>${c.nombre}</td>
-                    <td class="fw-bold">${c.cantidad}</td>
-                    <td>${clp.format(c.precio*c.cantidad)}</td>
-                    <td><button onclick="window.del(${i})" class="btn btn-sm text-danger"><i class="fas fa-trash"></i></button></td>
-                </tr>`;
+                html += `<tr><td>${c.nombre}</td><td class="fw-bold">${c.cantidad}</td><td>${clp.format(c.precio*c.cantidad)}</td><td><button onclick="window.del(${i})" class="btn btn-sm text-danger"><i class="fas fa-trash"></i></button></td></tr>`;
             });
             document.getElementById('cart-items').innerHTML = html;
             document.getElementById('cart-total').innerText = clp.format(total);
@@ -279,20 +329,9 @@
                 msg += `${c.cantidad} x ${c.nombre}%0A`;
             });
             msg += `%0ATotal: ${clp.format(total)}`;
-            
             await batch.commit();
-            await addDoc(collection(db, "ventas"), {
-                usuario: usuario.displayName, 
-                email: usuario.email, 
-                total, 
-                fecha: serverTimestamp(),
-                detalle: carrito
-            });
-
-            carrito=[]; saveCart();
-            // Recargar productos para actualizar stock visualmente
-            cargarProductos();
-            
+            await addDoc(collection(db, "ventas"), {usuario: usuario.displayName, email: usuario.email, total, fecha: serverTimestamp(), detalle: carrito});
+            carrito=[]; saveCart(); cargarProductos();
             bootstrap.Modal.getInstance(document.getElementById('cartModal')).hide();
             window.reiniciarModal();
             window.open(`https://wa.me/56912345678?text=${msg}`, '_blank');
