@@ -3,63 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minimarket - Cliente</title>
-    
+    <title>Minimarket - Ingreso Clientes</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
     <style>
         body { background-color: #f0f2f5; font-family: 'Segoe UI', sans-serif; }
-        
         .hero-section {
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://placehold.co/1200x400/1e272e/fff?text=Minimarket+24/7');
-            background-size: cover;
-            color: white;
-            padding: 60px 0;
-            text-align: center;
-            border-bottom: 4px solid #00d2d3;
-            margin-bottom: 30px;
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://placehold.co/1200x400/1e272e/fff?text=Market+Cloud');
+            background-size: cover; color: white; padding: 40px 0; text-align: center; border-bottom: 4px solid #00d2d3;
         }
-
-        .card { border: none; border-radius: 12px; transition: all 0.3s; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        
-        .card-img-wrapper { height: 180px; display: flex; align-items: center; justify-content: center; padding: 10px; border-bottom: 1px solid #f0f0f0; }
-        .card-img-top { max-height: 100%; max-width: 100%; object-fit: contain; }
-
-        .price-tag { color: #2e86de; font-size: 1.3rem; font-weight: 800; }
-        .stock-badge { position: absolute; top: 10px; left: 10px; font-size: 0.8rem; }
-        
-        .btn-add { background-color: #10ac84; color: white; border: none; font-weight: 600; }
-        .btn-add:hover { background-color: #1dd1a1; color: white; }
-        
-        /* Avatar de usuario */
-        .user-avatar { width: 32px; height: 32px; border-radius: 50%; border: 2px solid white; object-fit: cover; }
+        .login-card { max-width: 400px; margin: -50px auto 20px; z-index: 10; position: relative; }
+        .card-img-top { height: 150px; object-fit: contain; padding: 10px; }
+        .price-tag { color: #10ac84; font-weight: bold; font-size: 1.2rem; }
     </style>
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
+    <nav class="navbar navbar-dark bg-dark sticky-top">
         <div class="container">
             <a class="navbar-brand fw-bold text-info" href="#"><i class="fas fa-cloud"></i> Market Cloud</a>
-            
-            <div class="d-flex align-items-center ms-auto gap-3">
-                
-                <div id="login-container">
-                    <button id="btn-login" onclick="window.loginGoogle()" class="btn btn-sm btn-outline-info">
-                        <i class="fab fa-google"></i> Ingresar
-                    </button>
-                    
-                    <div id="user-info" class="d-none align-items-center text-white">
-                        <img id="user-photo" src="" class="user-avatar me-2">
-                        <span id="user-name" class="me-2 d-none d-sm-inline small">Usuario</span>
-                        <button onclick="window.logout()" class="btn btn-sm btn-outline-danger" title="Salir">
-                            <i class="fas fa-sign-out-alt"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <button class="btn btn-outline-light position-relative" data-bs-toggle="modal" data-bs-target="#cartModal" onclick="window.reiniciarModal()">
+            <div class="d-flex align-items-center">
+                <span id="user-display" class="text-white me-3 small"></span>
+                <button id="btn-logout" onclick="window.logout()" class="btn btn-sm btn-outline-danger d-none">Salir</button>
+                <button class="btn btn-outline-light position-relative ms-2" data-bs-toggle="modal" data-bs-target="#cartModal">
                     <i class="fas fa-shopping-cart"></i> 
                     <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
                 </button>
@@ -69,94 +35,75 @@
 
     <header class="hero-section">
         <div class="container">
-            <h2 class="fw-bold">Stock en Tiempo Real</h2>
-            <p class="mb-0 text-white-50">Inicia sesión para poder comprar</p>
+            <h2 class="fw-bold">Catálogo Privado</h2>
+            <p class="text-white-50">Ingresa tus credenciales para comprar</p>
         </div>
     </header>
 
-    <main class="container mb-5">
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="input-group">
-                    <span class="input-group-text"><i class="fas fa-search"></i></span>
-                    <input type="text" id="searchInput" class="form-control" placeholder="Buscar producto...">
-                </div>
+    <main class="container pb-5">
+        
+        <div id="login-container" class="card login-card shadow">
+            <div class="card-body p-4">
+                <h4 class="text-center mb-3 fw-bold text-primary">Acceso Clientes</h4>
+                <form id="login-form">
+                    <div class="mb-3">
+                        <label class="form-label">Usuario (Email)</label>
+                        <input type="email" id="login-email" class="form-control" placeholder="nombre@correo.com" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Contraseña</label>
+                        <input type="password" id="login-pass" class="form-control" placeholder="******" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 fw-bold">Ingresar</button>
+                    <p class="text-center mt-3 small text-muted">Solicita tu cuenta al administrador</p>
+                </form>
+                <div id="login-error" class="alert alert-danger mt-3 d-none"></div>
             </div>
         </div>
 
-        <div id="product-container" class="row g-4"></div>
+        <div id="catalog-section" class="d-none mt-4">
+            <div class="input-group mb-4">
+                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                <input type="text" id="searchInput" class="form-control" placeholder="Buscar producto...">
+            </div>
+            <div id="product-container" class="row g-4"></div>
+        </div>
+
     </main>
 
     <div class="modal fade" id="cartModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header bg-info">
-                    <h5 class="modal-title fw-bold text-white" id="modalTitle">Tu Carrito</h5>
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title">Tu Pedido</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                
                 <div class="modal-body">
                     <div id="cart-view">
-                        <table class="table align-middle">
-                            <tbody id="cart-items"></tbody>
-                        </table>
-                        <div class="text-end pt-3 border-top">
-                            <h4>Total: <span id="cart-total" class="text-primary fw-bold">$0</span></h4>
-                        </div>
+                        <table class="table"><tbody id="cart-items"></tbody></table>
+                        <h4 class="text-end text-primary" id="cart-total">$0</h4>
                     </div>
-
-                    <div id="bank-details" class="d-none">
-                        <div class="alert alert-success text-center">
-                            <i class="fas fa-check-circle"></i> Stock reservado. <br>Por favor transfiere al siguiente banco:
-                        </div>
-
-                        <div class="card bg-light border-0 shadow-sm p-3">
-                            <h5 class="text-primary fw-bold mb-3"><i class="fas fa-university"></i> Banco Tenpo</h5>
-                            
-                            <p class="mb-1"><strong>Nombre:</strong> CRISTIAN ANDRES PIMENTEL MANCILLA</p>
-                            
-                            <div class="d-flex justify-content-between align-items-center mb-1 bg-white p-2 rounded border">
-                                <span><strong>RUT:</strong> 16972068-1</span>
-                                <button class="btn btn-sm btn-outline-secondary" onclick="window.copiarTexto('16972068-1')"><i class="fas fa-copy"></i></button>
-                            </div>
-                            
-                            <p class="mb-1"><strong>Tipo:</strong> Cuenta Vista</p>
-                            
-                            <div class="d-flex justify-content-between align-items-center mb-1 bg-white p-2 rounded border">
-                                <span><strong>N° Cuenta:</strong> 111116972068</span>
-                                <button class="btn btn-sm btn-outline-secondary" onclick="window.copiarTexto('111116972068')"><i class="fas fa-copy"></i></button>
-                            </div>
-                            
-                            <p class="mb-0 mt-2 small text-muted">Correo: cpimentel@maquipan.cl</p>
-                        </div>
+                    <div id="bank-details" class="d-none p-3 bg-light rounded text-center">
+                        <h5 class="text-primary fw-bold">Banco Tenpo</h5>
+                        <p>CRISTIAN PIMENTEL | RUT: 16972068-1</p>
+                        <p class="h4">111116972068</p>
+                        <p class="text-muted">Cuenta Vista</p>
                     </div>
                 </div>
-
-                <div class="modal-footer bg-light">
-                    <div id="footer-cart" class="w-100 d-flex justify-content-end">
-                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Seguir comprando</button>
-                        <button type="button" class="btn btn-primary fw-bold" onclick="window.mostrarDatosPago()">
-                            <i class="fas fa-money-bill-wave"></i> Ir a Pagar
-                        </button>
-                    </div>
-
-                    <div id="footer-bank" class="w-100 d-flex justify-content-between d-none">
-                        <button type="button" class="btn btn-outline-secondary" onclick="window.reiniciarModal()">Atrás</button>
-                        <button type="button" class="btn btn-success fw-bold" onclick="window.finalizarCompra()">
-                            <i class="fab fa-whatsapp"></i> Confirmar y Enviar Comprobante
-                        </button>
-                    </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="window.reiniciarModal()" data-bs-dismiss="modal">Cerrar</button>
+                    <button class="btn btn-primary" id="btn-pay" onclick="window.mostrarDatosPago()">Pagar</button>
+                    <button class="btn btn-success d-none" id="btn-confirm" onclick="window.finalizarCompra()">Confirmar WhatsApp</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, onSnapshot, doc, increment, writeBatch, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDLPcKBki7SgEDqGoU2zGmvynmdRIaqYOA",
@@ -170,208 +117,135 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
-        const provider = new GoogleAuthProvider();
+        
+        let inventario = [], carrito = JSON.parse(localStorage.getItem('cart')) || [], usuario = null;
+        const clp = new Intl.NumberFormat('es-CL', {style:'currency', currency:'CLP'});
 
-        let inventario = [];
-        let carrito = JSON.parse(localStorage.getItem('carrito_firebase')) || [];
-        let usuarioActual = null;
-        const formatoCLP = new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' });
+        // 1. LOGIN
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-pass').value;
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch (err) {
+                document.getElementById('login-error').innerText = "Credenciales incorrectas";
+                document.getElementById('login-error').classList.remove('d-none');
+            }
+        });
 
-        // --- AUTENTICACIÓN ---
-        window.loginGoogle = () => {
-            signInWithPopup(auth, provider).catch((error) => {
-                console.error("Error Auth:", error);
-                alert("Error de autenticación: " + error.message);
-            });
-        };
-
-        window.logout = () => {
-            signOut(auth).then(() => location.reload());
-        };
+        window.logout = () => signOut(auth);
 
         onAuthStateChanged(auth, (user) => {
-            if (user) {
-                usuarioActual = user;
-                document.getElementById('btn-login').classList.add('d-none');
-                document.getElementById('user-info').classList.remove('d-none');
-                document.getElementById('user-info').classList.add('d-flex');
-                document.getElementById('user-name').innerText = user.displayName.split(' ')[0];
-                document.getElementById('user-photo').src = user.photoURL;
+            if(user) {
+                usuario = user;
+                document.getElementById('login-container').classList.add('d-none');
+                document.getElementById('catalog-section').classList.remove('d-none');
+                document.getElementById('btn-logout').classList.remove('d-none');
+                document.getElementById('user-display').innerText = "Hola, " + user.displayName;
+                cargarProductos();
             } else {
-                usuarioActual = null;
-                document.getElementById('btn-login').classList.remove('d-none');
-                document.getElementById('user-info').classList.add('d-none');
-                document.getElementById('user-info').classList.remove('d-flex');
+                usuario = null;
+                document.getElementById('login-container').classList.remove('d-none');
+                document.getElementById('catalog-section').classList.add('d-none');
+                document.getElementById('btn-logout').classList.add('d-none');
+                document.getElementById('user-display').innerText = "";
             }
         });
 
-        // --- FIRESTORE PRODUCTOS ---
-        const productosRef = collection(db, "productos");
-        onSnapshot(productosRef, (snapshot) => {
-            inventario = [];
-            snapshot.forEach((doc) => { inventario.push({ id: doc.id, ...doc.data() }); });
-            renderizarProductos();
-        });
-
-        function renderizarProductos() {
-            const container = document.getElementById('product-container');
-            const termino = document.getElementById('searchInput').value.toLowerCase();
-            container.innerHTML = '';
-
-            const filtrados = inventario.filter(p => p.nombre.toLowerCase().includes(termino));
-
-            filtrados.forEach(prod => {
-                const enCarrito = carrito.find(c => c.id === prod.id)?.cantidad || 0;
-                const stockReal = prod.stock - enCarrito;
-                const sinStock = stockReal <= 0;
-                const badgeColor = prod.stock < 5 ? 'bg-danger' : 'bg-success';
-
-                container.innerHTML += `
-                    <div class="col-6 col-md-4 col-lg-3">
-                        <div class="card h-100 ${sinStock ? 'opacity-75' : ''}">
-                            <span class="badge ${badgeColor} stock-badge">Stock: ${prod.stock}</span>
-                            <div class="card-img-wrapper">
-                                <img src="${prod.img}" class="card-img-top">
+        // 2. PRODUCTOS
+        function cargarProductos() {
+            onSnapshot(collection(db, "productos"), (snap) => {
+                inventario = [];
+                const div = document.getElementById('product-container');
+                div.innerHTML = '';
+                snap.forEach(d => {
+                    const p = {id:d.id, ...d.data()};
+                    inventario.push(p);
+                    const stock = p.stock - (carrito.find(c=>c.id==p.id)?.cantidad||0);
+                    div.innerHTML += `
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <div class="card h-100 shadow-sm border-0">
+                                <span class="badge position-absolute top-0 start-0 m-2 ${p.stock<5?'bg-danger':'bg-success'}">Stock: ${p.stock}</span>
+                                <img src="${p.img}" class="card-img-top">
+                                <div class="card-body">
+                                    <h6 class="fw-bold text-truncate">${p.nombre}</h6>
+                                    <div class="price-tag">${clp.format(p.precio)}</div>
+                                    <button class="btn btn-sm w-100 mt-2 ${stock<=0?'btn-secondary':'btn-primary'}" 
+                                    ${stock<=0?'disabled':''} onclick="window.add('${p.id}')">Agregar</button>
+                                </div>
                             </div>
-                            <div class="card-body d-flex flex-column">
-                                <h6 class="card-title fw-bold text-truncate">${prod.nombre}</h6>
-                                <p class="price-tag mb-1">${formatoCLP.format(prod.precio)}</p>
-                                <button class="btn ${sinStock ? 'btn-secondary' : 'btn-add'} mt-auto w-100 rounded-pill" 
-                                    ${sinStock ? 'disabled' : `onclick="window.agregarAlCarrito('${prod.id}')"`}>
-                                    ${sinStock ? 'Agotado' : 'Agregar'}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
+                        </div>`;
+                });
+                renderCart();
             });
-            actualizarIconoCarrito();
         }
 
-        // --- CARRITO ---
-        window.agregarAlCarrito = (id) => {
-            const prod = inventario.find(p => p.id === id);
-            const item = carrito.find(c => c.id === id);
-            const cantActual = item ? item.cantidad : 0;
-
-            if (cantActual >= prod.stock) return alert("No hay más stock disponible.");
-
-            if (item) item.cantidad++;
-            else carrito.push({ id: prod.id, nombre: prod.nombre, precio: prod.precio, cantidad: 1 });
-
-            guardarCarritoLocal();
-            renderizarProductos();
+        // 3. CARRITO
+        window.add = (id) => {
+            const p = inventario.find(x=>x.id==id);
+            const item = carrito.find(x=>x.id==id);
+            if((item?.cantidad||0) >= p.stock) return alert("Sin stock");
+            if(item) item.cantidad++; else carrito.push({id:p.id, nombre:p.nombre, precio:p.precio, cantidad:1});
+            saveCart();
         };
 
-        window.eliminarItem = (index) => {
-            carrito.splice(index, 1);
-            guardarCarritoLocal();
-            renderizarProductos();
-            window.actualizarModalCarrito();
-        };
+        window.del = (i) => { carrito.splice(i,1); saveCart(); };
+        function saveCart() { localStorage.setItem('cart', JSON.stringify(carrito)); renderCart(); cargarProductos(); }
+        
+        function renderCart() {
+            document.getElementById('cart-count').innerText = carrito.reduce((a,b)=>a+b.cantidad,0);
+            let total=0, html='';
+            carrito.forEach((c,i) => {
+                total += c.precio*c.cantidad;
+                html += `<tr><td>${c.nombre}</td><td>${c.cantidad}</td><td>${clp.format(c.precio*c.cantidad)}</td><td><button onclick="window.del(${i})" class="btn btn-sm text-danger">X</button></td></tr>`;
+            });
+            document.getElementById('cart-items').innerHTML = html;
+            document.getElementById('cart-total').innerText = clp.format(total);
+        }
 
-        // --- MODAL Y PAGOS ---
+        // 4. PAGO
         window.mostrarDatosPago = () => {
-            if (!usuarioActual) {
-                alert("Por seguridad, debes iniciar sesión con Google para finalizar la compra.");
-                window.loginGoogle();
-                return;
-            }
-            if (carrito.length === 0) return alert("El carrito está vacío");
-            
+            if(!carrito.length) return alert("Carrito vacío");
             document.getElementById('cart-view').classList.add('d-none');
-            document.getElementById('footer-cart').classList.add('d-none');
             document.getElementById('bank-details').classList.remove('d-none');
-            document.getElementById('footer-bank').classList.remove('d-none');
-            document.getElementById('modalTitle').innerText = "Datos para Transferencia";
+            document.getElementById('btn-pay').classList.add('d-none');
+            document.getElementById('btn-confirm').classList.remove('d-none');
         };
 
         window.reiniciarModal = () => {
             document.getElementById('cart-view').classList.remove('d-none');
-            document.getElementById('footer-cart').classList.remove('d-none');
             document.getElementById('bank-details').classList.add('d-none');
-            document.getElementById('footer-bank').classList.add('d-none');
-            document.getElementById('modalTitle').innerText = "Tu Carrito";
-        };
-
-        window.copiarTexto = (texto) => {
-            navigator.clipboard.writeText(texto).then(() => alert("Copiado: " + texto));
+            document.getElementById('btn-pay').classList.remove('d-none');
+            document.getElementById('btn-confirm').classList.add('d-none');
         };
 
         window.finalizarCompra = async () => {
             const batch = writeBatch(db);
-            let total = 0;
-            let detalleVenta = [];
-            let mensaje = `*NUEVO PEDIDO WEB*%0A👤 Cliente: ${usuarioActual.displayName}%0A📧 Email: ${usuarioActual.email}%0A%0A*Detalle del pedido:*%0A`;
-
-            carrito.forEach(item => {
-                const ref = doc(db, "productos", item.id);
-                batch.update(ref, { stock: increment(-item.cantidad) });
-                total += item.precio * item.cantidad;
-                detalleVenta.push({ producto: item.nombre, cantidad: item.cantidad, precio: item.precio });
-                mensaje += `📦 ${item.cantidad} x ${item.nombre}%0A`;
+            let total=0, msg=`*NUEVO PEDIDO*%0ACliente: ${usuario.displayName}%0A%0A`;
+            carrito.forEach(c => {
+                batch.update(doc(db, "productos", c.id), {stock: increment(-c.cantidad)});
+                total += c.precio*c.cantidad;
+                msg += `${c.cantidad} x ${c.nombre}%0A`;
             });
-
-            const nuevaVenta = {
-                usuario_uid: usuarioActual.uid,
-                usuario_nombre: usuarioActual.displayName,
-                usuario_email: usuarioActual.email,
-                fecha: serverTimestamp(),
-                total: total,
-                detalle: detalleVenta
-            };
-
-            mensaje += `%0A💰 *TOTAL A PAGAR: ${formatoCLP.format(total)}*`;
-            mensaje += `%0A%0AAdjunto comprobante de transferencia a Tenpo.`;
-
-            try {
-                await batch.commit(); // Descuenta stock
-                await addDoc(collection(db, "ventas"), nuevaVenta); // Guarda historial
-
-                carrito = [];
-                guardarCarritoLocal();
-                
-                const modalEl = document.getElementById('cartModal');
-                const modal = bootstrap.Modal.getInstance(modalEl);
-                modal.hide();
-                window.reiniciarModal();
-
-                window.open(`https://wa.me/56912345678?text=${mensaje}`, '_blank');
-                
-            } catch (error) {
-                alert("Error al procesar: " + error.message);
-                console.error(error);
-            }
-        };
-
-        function guardarCarritoLocal() { localStorage.setItem('carrito_firebase', JSON.stringify(carrito)); actualizarIconoCarrito(); }
-        
-        function actualizarIconoCarrito() { 
-            document.getElementById('cart-count').innerText = carrito.reduce((acc, item) => acc + item.cantidad, 0); 
-            window.actualizarModalCarrito(); 
-        }
-
-        window.actualizarModalCarrito = () => {
-            const tbody = document.getElementById('cart-items');
-            let total = 0;
-            tbody.innerHTML = '';
+            msg += `%0ATotal: ${clp.format(total)}`;
             
-            carrito.forEach((item, index) => {
-                const sub = item.precio * item.cantidad;
-                total += sub;
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${item.nombre}</td>
-                        <td>${item.cantidad}</td>
-                        <td>${formatoCLP.format(sub)}</td>
-                        <td><button class="btn btn-sm text-danger" onclick="window.eliminarItem(${index})"><i class="fas fa-trash"></i></button></td>
-                    </tr>
-                `;
+            await batch.commit();
+            await addDoc(collection(db, "ventas"), {
+                usuario: usuario.displayName, 
+                email: usuario.email, 
+                total, 
+                fecha: serverTimestamp(),
+                detalle: carrito
             });
-            document.getElementById('cart-total').innerText = formatoCLP.format(total);
-        };
 
-        document.getElementById('searchInput').addEventListener('input', renderizarProductos);
+            carrito=[]; saveCart();
+            bootstrap.Modal.getInstance(document.getElementById('cartModal')).hide();
+            window.reiniciarModal();
+            window.open(`https://wa.me/56912345678?text=${msg}`, '_blank');
+        };
+        
+        document.getElementById('searchInput').addEventListener('input', cargarProductos);
     </script>
 </body>
 </html>
