@@ -175,7 +175,7 @@
         </div>
     </footer>
 
-    <a href="https://wa.me/56912345678" class="float-wa" target="_blank"><i class="fab fa-whatsapp"></i></a>
+    <a href="https://wa.me/56966746344" class="float-wa" target="_blank"><i class="fab fa-whatsapp"></i></a>
 
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
         <div id="liveToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
@@ -468,7 +468,7 @@
                 total += c.precio*c.cantidad; msg += `📦 ${c.cantidad}x ${c.nombre}%0A`;
             });
             msg += `%0A💰 Total: ${clp.format(total)}`;
-            try { await batch.commit(); await addDoc(collection(db, "ventas"), {usuario: usuario.displayName, email: usuario.email, total, fecha: serverTimestamp(), detalle: carrito}); carrito=[]; saveCart(); cargarProductos(); bootstrap.Modal.getInstance(document.getElementById('cartModal')).hide(); window.reiniciarModal(); window.open(`https://wa.me/56912345678?text=${msg}`, '_blank'); } catch(e) { window.showToast("Error: "+e.message, "danger"); }
+            try { await batch.commit(); await addDoc(collection(db, "ventas"), {usuario: usuario.displayName, email: usuario.email, total, fecha: serverTimestamp(), detalle: carrito}); carrito=[]; saveCart(); cargarProductos(); bootstrap.Modal.getInstance(document.getElementById('cartModal')).hide(); window.reiniciarModal(); window.open(`https://wa.me/56966746344?text=${msg}`, '_blank'); } catch(e) { window.showToast("Error: "+e.message, "danger"); }
         };
 
         window.abrirModalPassword = () => new bootstrap.Modal(document.getElementById('passwordModal')).show();
@@ -495,3 +495,4 @@
     </script>
 </body>
 </html>
+
