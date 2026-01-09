@@ -90,7 +90,8 @@
                 <div class="accordion-item">
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed fw-bold bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProd">
-                            <i class="fas fa-boxes me-2"></i> Gestión de Inventario (Click para abrir)
+                            <i class="fas fa-boxes me-2"></i> Gestión de Inventario 
+                            <span id="total-items-count" class="badge bg-secondary ms-2">0</span>
                         </button>
                     </h2>
                     <div id="collapseProd" class="accordion-collapse collapse show" data-bs-parent="#accordionProd">
@@ -189,7 +190,7 @@
         window.logout = () => signOut(auth).then(()=>location.reload());
 
         onAuthStateChanged(auth, (user) => {
-            // VERIFICACIÓN DE ADMIN MÁS FLEXIBLE PARA EVITAR ERRORES DE MAYÚSCULAS/MINÚSCULAS
+            // VERIFICACIÓN DE ADMIN
             if (user && ADMIN_EMAILS.some(email => email.toLowerCase() === user.email.toLowerCase())) {
                 document.getElementById('login-screen').classList.add('d-none');
                 document.getElementById('dashboard-screen').classList.remove('d-none');
@@ -248,16 +249,19 @@
                             selectManual.innerHTML += `<option value="${p.id}">${nombre} ($${precio}) - Stock: ${stock}</option>`;
                         }
                     });
-                    document.getElementById('kpi-valor').innerText = clp.format(valor);
-                    document.getElementById('total-items-count').innerText = inventario.length;
+                    
+                    // SEGURIDAD: Verificar si los elementos existen antes de asignarles valor
+                    const kpiEl = document.getElementById('kpi-valor');
+                    if(kpiEl) kpiEl.innerText = clp.format(valor);
+                    
+                    const countEl = document.getElementById('total-items-count');
+                    if(countEl) countEl.innerText = inventario.length;
 
                 } catch (error) {
                     console.error("Error al mostrar productos:", error);
-                    alert("Error visualizando productos. Revisa la consola (F12) para más detalles.");
                 }
             }, (error) => {
                 console.error("Error de permisos o conexión:", error);
-                alert("No se pudieron cargar los productos. Verifica tu conexión o permisos.");
             });
 
             // 2. CARGA VENTAS
@@ -269,8 +273,12 @@
                     historialVentas.push(v); 
                     if(v.pagado === true) pagado += (v.total||0); else pendiente += (v.total||0);
                 });
-                document.getElementById('kpi-pagado').innerText = clp.format(pagado);
-                document.getElementById('kpi-pendiente').innerText = clp.format(pendiente);
+                
+                const kpiPag = document.getElementById('kpi-pagado');
+                const kpiPen = document.getElementById('kpi-pendiente');
+                if(kpiPag) kpiPag.innerText = clp.format(pagado);
+                if(kpiPen) kpiPen.innerText = clp.format(pendiente);
+                
                 renderVentas(historialVentas);
             });
         }
@@ -304,7 +312,9 @@
 
         // --- VENTAS ---
         function renderVentas(lista) {
-            const tbody = document.getElementById('sales-table'); tbody.innerHTML='';
+            const tbody = document.getElementById('sales-table'); 
+            if(!tbody) return;
+            tbody.innerHTML='';
             lista.forEach(v => {
                 const f = v.fecha ? v.fecha.toDate().toLocaleDateString() : '-';
                 const i = v.detalle ? v.detalle.map(x=>`${x.cantidad}x${x.nombre}`).join(', ') : '';
