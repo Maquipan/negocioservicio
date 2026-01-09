@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Kiosco Maquipan</title>
+    <title>Admin - Finanzas Maquipan</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -11,8 +11,8 @@
 
     <div id="login-screen" class="container d-flex justify-content-center align-items-center vh-100">
         <div class="card shadow p-4" style="max-width: 400px; width: 100%;">
-            <div class="text-center mb-3"><i class="fas fa-chart-pie fa-3x text-primary"></i></div>
-            <h4 class="text-center mb-3">Panel de Control</h4>
+            <div class="text-center mb-3"><i class="fas fa-wallet fa-3x text-primary"></i></div>
+            <h4 class="text-center mb-3">Administración</h4>
             <form id="admin-login-form">
                 <input type="email" id="admin-user" class="form-control mb-2" placeholder="admin@maquipan.cl" required>
                 <input type="password" id="admin-pass" class="form-control mb-3" placeholder="Contraseña" required>
@@ -25,7 +25,7 @@
     <div id="dashboard-screen" class="d-none">
         <nav class="navbar navbar-dark bg-dark mb-4 sticky-top shadow">
             <div class="container">
-                <a class="navbar-brand fw-bold text-warning" href="#"><i class="fas fa-box-open"></i> Gestión Maquipan</a>
+                <a class="navbar-brand fw-bold text-warning" href="#"><i class="fas fa-coins"></i> Finanzas Maquipan</a>
                 <div class="d-flex align-items-center">
                     <button onclick="window.logout()" class="btn btn-outline-danger btn-sm me-2">Salir</button>
                     <a href="index.html" class="btn btn-outline-light btn-sm" target="_blank">Ver Kiosco</a>
@@ -35,105 +35,127 @@
 
         <div class="container pb-5">
             <div class="row mb-4 g-3">
-                <div class="col-md-4"><div class="card text-white bg-success h-100 shadow-sm"><div class="card-body"><h6>Valor Inventario</h6><h3 class="fw-bold" id="kpi-valor">$0</h3></div></div></div>
-                <div class="col-md-4"><div class="card text-white bg-danger h-100 shadow-sm"><div class="card-body"><h6>Stock Crítico</h6><h3 class="fw-bold" id="kpi-critico">0</h3></div></div></div>
-                <div class="col-md-4"><div class="card text-white bg-info h-100 shadow-sm"><div class="card-body"><h6>Ventas Totales</h6><h3 class="fw-bold" id="kpi-ventas">$0</h3></div></div></div>
+                <div class="col-md-4"><div class="card text-white bg-success h-100 shadow-sm"><div class="card-body"><h6>Dinero Recaudado (Pagado)</h6><h3 class="fw-bold" id="kpi-pagado">$0</h3></div></div></div>
+                <div class="col-md-4"><div class="card text-white bg-danger h-100 shadow-sm"><div class="card-body"><h6>Por Cobrar (Pendiente)</h6><h3 class="fw-bold" id="kpi-pendiente">$0</h3></div></div></div>
+                <div class="col-md-4"><div class="card text-white bg-info h-100 shadow-sm"><div class="card-body"><h6>Valor Inventario</h6><h3 class="fw-bold" id="kpi-valor">$0</h3></div></div></div>
             </div>
 
-            <div class="row mb-4">
-                <div class="col-md-4 mb-4">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-header bg-dark text-white fw-bold">Nuevo Producto</div>
-                        <div class="card-body">
-                            <form id="product-form">
-                                <input type="hidden" id="edit-id">
-                                <div class="mb-2"><input type="text" id="nombre" class="form-control" placeholder="Nombre" required></div>
-                                <div class="mb-2">
-                                    <select id="categoria" class="form-select" required>
-                                        <option value="" disabled selected>Categoría...</option>
-                                        <option value="Bebidas">Bebidas</option>
-                                        <option value="Snacks">Snacks</option>
-                                        <option value="Cafeteria">Cafetería</option>
-                                        <option value="Otros">Otros</option>
-                                    </select>
-                                </div>
-                                <div class="mb-2"><input type="text" id="mejoras" class="form-control form-control-sm" placeholder="Detalle (ej: Sin azúcar)"></div>
-                                <div class="row g-2 mb-2">
-                                    <div class="col-6"><input type="number" id="precio" class="form-control" placeholder="Precio" required></div>
-                                    <div class="col-6"><input type="number" id="stock" class="form-control" placeholder="Stock" required></div>
-                                </div>
-                                <div class="mb-3"><input type="url" id="img" class="form-control" placeholder="URL Imagen" required></div>
-                                <button type="submit" class="btn btn-primary w-100 fw-bold" id="btn-save">Guardar</button>
-                                <button type="button" class="btn btn-secondary w-100 mt-2 d-none" id="btn-cancel" onclick="resetForm()">Cancelar</button>
-                            </form>
-                            <hr>
-                            <h6 class="fw-bold text-muted mt-3">Registrar Compañero</h6>
-                            <form id="create-client-form" class="row g-2">
-                                <div class="col-12"><input type="text" id="new-name" class="form-control form-control-sm" placeholder="Nombre" required></div>
-                                <div class="col-6"><input type="email" id="new-email" class="form-control form-control-sm" placeholder="Email" required></div>
-                                <div class="col-6"><input type="text" id="new-pass" class="form-control form-control-sm" placeholder="Clave" required></div>
-                                <div class="col-12"><button type="submit" class="btn btn-sm btn-outline-success w-100">Crear</button></div>
-                            </form>
+            <div class="card shadow-sm border-warning mb-4">
+                <div class="card-header bg-warning text-dark fw-bold">
+                    <i class="fas fa-cash-register"></i> Nueva Venta Manual
+                </div>
+                <div class="card-body">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-4">
+                            <label class="small text-muted">Producto</label>
+                            <select id="manual-product-select" class="form-select">
+                                <option value="">Seleccione...</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="small text-muted">Cantidad</label>
+                            <input type="number" id="manual-qty" class="form-control" value="1" min="1">
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-dark w-100" onclick="window.agregarAlTicketManual()"><i class="fas fa-plus"></i> Agregar</button>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="small text-muted">Cliente</label>
+                            <input type="text" id="manual-client-name" class="form-control" placeholder="Nombre compañero">
                         </div>
                     </div>
-                </div>
 
-                <div class="col-md-8">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                            <span class="fw-bold">Inventario</span>
-                            <span class="badge bg-secondary" id="total-items-count">0</span>
+                    <div class="table-responsive mt-3 border rounded">
+                        <table class="table table-sm table-striped mb-0">
+                            <thead class="table-light"><tr><th>Producto</th><th class="text-center">Cant.</th><th class="text-end">Subtotal</th><th></th></tr></thead>
+                            <tbody id="manual-cart-items"><tr><td colspan="4" class="text-center text-muted small py-2">Ticket vacío</td></tr></tbody>
+                        </table>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-3 bg-light p-3 rounded">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="check-pagado" checked>
+                            <label class="form-check-label fw-bold" for="check-pagado">¿Pagado Inmediatamente?</label>
                         </div>
-                        <div class="card-body p-0">
-                            <div class="table-responsive" style="height: 500px; overflow: auto;">
-                                <table class="table table-hover align-middle mb-0">
-                                    <thead class="table-light sticky-top"><tr><th>Img</th><th>Producto</th><th>Cat.</th><th>Stock</th><th>Acción</th></tr></thead>
-                                    <tbody id="products-table"></tbody>
-                                </table>
-                            </div>
+                        <div class="d-flex align-items-center">
+                            <h4 class="mb-0 me-3">Total: <span id="manual-total" class="text-success fw-bold">$0</span></h4>
+                            <button class="btn btn-success fw-bold" onclick="window.confirmarVentaManual()">Confirmar Venta</button>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="row">
-                <div class="col-lg-8 mb-4">
+                <div class="col-lg-12 mb-4">
                     <div class="card shadow-sm h-100">
                         <div class="card-header bg-white py-3">
                             <div class="row align-items-center">
-                                <div class="col-md-6"><h5 class="mb-0 fw-bold text-primary">Historial Ventas</h5></div>
-                                <div class="col-md-6"><input type="text" id="search-sales" class="form-control" placeholder="Buscar venta..."></div>
+                                <div class="col-md-6"><h5 class="mb-0 fw-bold text-primary">Historial y Cobranza</h5></div>
+                                <div class="col-md-6"><input type="text" id="search-sales" class="form-control" placeholder="Buscar por cliente..."></div>
                             </div>
                         </div>
                         <div class="card-body p-0">
-                            <div class="table-responsive" style="height: 400px; overflow: auto;">
+                            <div class="table-responsive" style="height: 500px; overflow: auto;">
                                 <table class="table table-hover align-middle mb-0">
-                                    <thead class="table-light sticky-top"><tr><th>Fecha</th><th>Cliente</th><th>Detalle</th><th class="text-end">Total</th><th class="text-end">Acciones</th></tr></thead>
-                                    <tbody id="sales-table"><tr><td colspan="5" class="text-center py-3">Cargando...</td></tr></tbody>
+                                    <thead class="table-light sticky-top">
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Cliente</th>
+                                            <th>Detalle</th>
+                                            <th class="text-end">Total</th>
+                                            <th class="text-center">Estado Pago</th>
+                                            <th class="text-end">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="sales-table"><tr><td colspan="6" class="text-center py-3">Cargando...</td></tr></tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="col-lg-4 mb-4">
-                    <div class="card shadow-sm border-info h-100">
-                        <div class="card-header bg-info text-white fw-bold">
-                            <i class="fas fa-lightbulb"></i> Buzón de Sugerencias
-                        </div>
-                        <div class="card-body p-0">
-                            <div class="table-responsive" style="height: 400px; overflow: auto;">
-                                <table class="table table-hover align-middle mb-0">
-                                    <thead class="table-light sticky-top">
-                                        <tr>
-                                            <th>Sugerencia</th>
-                                            <th class="text-end">Acción</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="suggestions-table">
-                                        <tr><td colspan="2" class="text-center py-3 text-muted">No hay sugerencias nuevas.</td></tr>
-                                    </tbody>
-                                </table>
+            <div class="accordion mb-4" id="accordionProd">
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProd">
+                            <i class="fas fa-boxes me-2"></i> Gestión de Inventario (Click para abrir)
+                        </button>
+                    </h2>
+                    <div id="collapseProd" class="accordion-collapse collapse" data-bs-parent="#accordionProd">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="card bg-light border-0">
+                                        <div class="card-body">
+                                            <h6>Nuevo Producto</h6>
+                                            <form id="product-form">
+                                                <input type="hidden" id="edit-id">
+                                                <input type="text" id="nombre" class="form-control mb-2" placeholder="Nombre" required>
+                                                <select id="categoria" class="form-select mb-2" required>
+                                                    <option value="" disabled selected>Categoría...</option>
+                                                    <option value="Bebidas">Bebidas</option>
+                                                    <option value="Snacks">Snacks</option>
+                                                    <option value="Cafeteria">Cafetería</option>
+                                                    <option value="Otros">Otros</option>
+                                                </select>
+                                                <input type="text" id="mejoras" class="form-control mb-2" placeholder="Detalle">
+                                                <div class="row g-2 mb-2">
+                                                    <div class="col"><input type="number" id="precio" class="form-control" placeholder="$" required></div>
+                                                    <div class="col"><input type="number" id="stock" class="form-control" placeholder="Cant" required></div>
+                                                </div>
+                                                <input type="url" id="img" class="form-control mb-2" placeholder="URL Img" required>
+                                                <button type="submit" class="btn btn-dark w-100" id="btn-save">Guardar</button>
+                                                <button type="button" class="btn btn-secondary w-100 mt-2 d-none" id="btn-cancel" onclick="resetForm()">Cancelar</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="table-responsive" style="height: 300px; overflow: auto;">
+                                        <table class="table table-sm table-hover"><tbody id="products-table"></tbody></table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -147,7 +169,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-warning">
-                    <h5 class="modal-title fw-bold">Corregir Venta</h5>
+                    <h5 class="modal-title fw-bold">Editar Datos Venta</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -155,7 +177,6 @@
                         <input type="hidden" id="sale-id">
                         <div class="mb-3"><label>Cliente</label><input type="text" id="sale-client" class="form-control"></div>
                         <div class="mb-3"><label>Total ($)</label><input type="number" id="sale-total" class="form-control fw-bold"></div>
-                        <p class="text-muted small">Nota: Editar aquí solo cambia el texto, no el stock.</p>
                     </form>
                 </div>
                 <div class="modal-footer"><button type="button" class="btn btn-primary" onclick="window.guardarVentaEditada()">Guardar</button></div>
@@ -166,8 +187,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, updateDoc, doc, query, orderBy, getDoc, writeBatch, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, updateDoc, doc, query, orderBy, getDoc, writeBatch, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signOut, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDLPcKBki7SgEDqGoU2zGmvynmdRIaqYOA",
@@ -181,13 +202,12 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const secondaryApp = initializeApp(firebaseConfig, "Secondary");
-        const secondaryAuth = getAuth(secondaryApp);
 
         const ADMIN_EMAILS = ["cpimentel@maquipan.cl", "admin@maquipan.cl"];
         const clp = new Intl.NumberFormat('es-CL', {style:'currency', currency:'CLP'});
-        let inventario = [], historialVentas = [];
+        let inventario = [], historialVentas = [], carritoManual = [];
 
+        // AUTH
         document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             try { await signInWithEmailAndPassword(auth, document.getElementById('admin-user').value, document.getElementById('admin-pass').value); } 
@@ -207,101 +227,145 @@
             // 1. PRODUCTOS
             onSnapshot(collection(db, "productos"), (snap) => {
                 inventario = [];
-                let valor=0, criticos=0;
-                const tbody = document.getElementById('products-table'); tbody.innerHTML = '';
+                let valor=0;
+                const tbody = document.getElementById('products-table'); 
+                const selectManual = document.getElementById('manual-product-select');
+                tbody.innerHTML = ''; selectManual.innerHTML = '<option value="">Seleccione...</option>';
+
                 snap.forEach(d => {
                     const p = { id: d.id, ...d.data() };
                     inventario.push(p);
                     valor += (p.precio * p.stock);
-                    if(p.stock < 5) criticos++;
-                    tbody.innerHTML += `
-                        <tr class="${p.stock<5?'table-danger':''}">
-                            <td><img src="${p.img}" width="30"></td>
-                            <td>${p.nombre}<br><small class="text-muted">${p.mejoras||''}</small></td>
-                            <td><span class="badge bg-secondary">${p.categoria||'-'}</span></td>
-                            <td class="fw-bold">${p.stock}</td>
-                            <td>
-                                <button class="btn btn-sm btn-primary py-0" onclick="window.editar('${p.id}')"><i class="fas fa-pen"></i></button>
-                                <button class="btn btn-sm btn-danger py-0" onclick="window.borrar('${p.id}')"><i class="fas fa-trash"></i></button>
-                            </td>
-                        </tr>`;
+                    tbody.innerHTML += `<tr><td>${p.nombre}</td><td>${p.stock}</td><td>${clp.format(p.precio)}</td><td class="text-end"><button class="btn btn-sm btn-primary py-0" onclick="window.editar('${p.id}')"><i class="fas fa-pen"></i></button> <button class="btn btn-sm btn-danger py-0" onclick="window.borrar('${p.id}')"><i class="fas fa-trash"></i></button></td></tr>`;
+                    if(p.stock > 0) selectManual.innerHTML += `<option value="${p.id}">${p.nombre} ($${p.precio}) - Stock: ${p.stock}</option>`;
                 });
                 document.getElementById('kpi-valor').innerText = clp.format(valor);
-                document.getElementById('kpi-critico').innerText = criticos;
-                document.getElementById('total-items-count').innerText = inventario.length;
             });
 
-            // 2. VENTAS
+            // 2. VENTAS (CON ESTADO DE PAGO)
             onSnapshot(query(collection(db, "ventas"), orderBy("fecha", "desc")), (snap) => {
                 historialVentas = [];
-                let totalH=0;
-                snap.forEach(d => { const v={id:d.id, ...d.data()}; historialVentas.push(v); totalH+=(v.total||0); });
-                document.getElementById('kpi-ventas').innerText = clp.format(totalH);
-                renderVentas(historialVentas);
-            });
-
-            // 3. SUGERENCIAS (NUEVO)
-            onSnapshot(query(collection(db, "sugerencias"), orderBy("fecha", "desc")), (snap) => {
-                const tbody = document.getElementById('suggestions-table');
-                if(snap.empty) { tbody.innerHTML = '<tr><td colspan="2" class="text-center py-3 text-muted">Sin novedades.</td></tr>'; return; }
-                
-                tbody.innerHTML = '';
-                snap.forEach(d => {
-                    const s = {id:d.id, ...d.data()};
-                    const fecha = s.fecha ? s.fecha.toDate().toLocaleDateString() : '-';
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>
-                                <div class="fw-bold text-dark">${s.producto}</div>
-                                <div class="small text-muted">De: ${s.usuario} (${fecha})</div>
-                            </td>
-                            <td class="text-end">
-                                <button class="btn btn-sm btn-outline-danger" onclick="window.borrarSugerencia('${s.id}')" title="Borrar"><i class="fas fa-times"></i></button>
-                            </td>
-                        </tr>`;
+                let totalPagado = 0, totalPendiente = 0;
+                snap.forEach(d => { 
+                    const v={id:d.id, ...d.data()}; 
+                    historialVentas.push(v); 
+                    // Si el campo 'pagado' no existe (ventas viejas), asumimos true o false. 
+                    // Para seguridad financiera, si no existe lo tratamos como 'false' (Pendiente) para verificar.
+                    const estaPagado = v.pagado === true; 
+                    if(estaPagado) totalPagado += (v.total||0); else totalPendiente += (v.total||0);
                 });
+                
+                document.getElementById('kpi-pagado').innerText = clp.format(totalPagado);
+                document.getElementById('kpi-pendiente').innerText = clp.format(totalPendiente);
+                renderVentas(historialVentas);
             });
         }
 
+        // --- CAJA MANUAL ---
+        window.agregarAlTicketManual = () => {
+            const id = document.getElementById('manual-product-select').value;
+            const cant = parseInt(document.getElementById('manual-qty').value);
+            if(!id || cant < 1) return alert("Datos inválidos");
+            
+            const prod = inventario.find(p => p.id === id);
+            const item = carritoManual.find(c => c.id === id);
+            if((item?item.cantidad:0) + cant > prod.stock) return alert("Stock insuficiente");
+
+            if(item) item.cantidad += cant; else carritoManual.push({ id: prod.id, nombre: prod.nombre, precio: prod.precio, cantidad: cant });
+            document.getElementById('manual-qty').value = 1;
+            renderTicket();
+        };
+
+        window.eliminarItemManual = (i) => { carritoManual.splice(i,1); renderTicket(); };
+
+        function renderTicket() {
+            const tbody = document.getElementById('manual-cart-items');
+            let total = 0; tbody.innerHTML = '';
+            if(!carritoManual.length) { tbody.innerHTML='<tr><td colspan="4" class="text-center small py-2">Vacío</td></tr>'; }
+            else {
+                carritoManual.forEach((it, i) => {
+                    total += it.cantidad * it.precio;
+                    tbody.innerHTML += `<tr><td>${it.nombre}</td><td class="text-center">${it.cantidad}</td><td class="text-end">${clp.format(it.cantidad*it.precio)}</td><td class="text-end"><button class="btn btn-sm text-danger p-0" onclick="window.eliminarItemManual(${i})"><i class="fas fa-times"></i></button></td></tr>`;
+                });
+            }
+            document.getElementById('manual-total').innerText = clp.format(total);
+        }
+
+        window.confirmarVentaManual = async () => {
+            if(!carritoManual.length) return alert("Ticket vacío");
+            const cliente = document.getElementById('manual-client-name').value || "Mesón";
+            const pagadoAhora = document.getElementById('check-pagado').checked;
+            const batch = writeBatch(db);
+            let total = 0;
+
+            carritoManual.forEach(i => {
+                batch.update(doc(db, "productos", i.id), { stock: increment(-i.cantidad) });
+                total += i.precio * i.cantidad;
+            });
+
+            const nuevaVenta = doc(collection(db, "ventas"));
+            batch.set(nuevaVenta, {
+                usuario: cliente,
+                email: "venta@manual",
+                detalle: carritoManual,
+                total: total,
+                pagado: pagadoAhora, // GUARDAMOS SI PAGÓ O NO
+                fecha: serverTimestamp()
+            });
+
+            try { await batch.commit(); alert("Venta registrada"); carritoManual=[]; renderTicket(); document.getElementById('manual-client-name').value=""; }
+            catch(e) { alert("Error: "+e.message); }
+        };
+
+        // --- HISTORIAL VENTAS Y TOGGLE PAGO ---
         function renderVentas(lista) {
             const tbody = document.getElementById('sales-table');
             tbody.innerHTML = '';
             lista.forEach(v => {
-                const items = v.detalle ? v.detalle.map(i=>`${i.cantidad}x${i.nombre}`).join(', ') : '';
                 const fecha = v.fecha ? v.fecha.toDate().toLocaleDateString() : '-';
-                tbody.innerHTML += `<tr><td class="small">${fecha}</td><td>${v.usuario}<br><small>${v.email}</small></td><td class="small text-muted">${items}</td><td class="text-end fw-bold text-success">${clp.format(v.total)}</td><td class="text-end"><button class="btn btn-sm btn-light border" onclick="window.prepEdit('${v.id}')"><i class="fas fa-pen text-warning"></i></button><button class="btn btn-sm btn-light border ms-1" onclick="window.borrarVenta('${v.id}')"><i class="fas fa-trash text-danger"></i></button></td></tr>`;
+                const items = v.detalle ? v.detalle.map(i=>`${i.cantidad}x${i.nombre}`).join(', ') : '';
+                
+                // LÓGICA DE ESTADO
+                const pagado = v.pagado === true;
+                const badgeClass = pagado ? 'bg-success' : 'bg-danger';
+                const textoEstado = pagado ? 'Pagado' : 'Pendiente';
+                const btnIcon = pagado ? 'fa-undo' : 'fa-check';
+                const btnTitle = pagado ? 'Marcar Pendiente' : 'Marcar Pagado';
+                const btnColor = pagado ? 'btn-outline-secondary' : 'btn-success';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="small">${fecha}</td>
+                        <td class="fw-bold">${v.usuario}</td>
+                        <td class="small text-muted">${items}</td>
+                        <td class="text-end fw-bold">${clp.format(v.total)}</td>
+                        <td class="text-center"><span class="badge ${badgeClass}">${textoEstado}</span></td>
+                        <td class="text-end">
+                            <button class="btn btn-sm ${btnColor} me-1" onclick="window.togglePago('${v.id}', ${pagado})" title="${btnTitle}">
+                                <i class="fas ${btnIcon}"></i>
+                            </button>
+                            <button class="btn btn-sm btn-light border me-1" onclick="window.prepEdit('${v.id}')"><i class="fas fa-pen text-warning"></i></button>
+                            <button class="btn btn-sm btn-light border" onclick="window.borrarVenta('${v.id}')"><i class="fas fa-trash text-danger"></i></button>
+                        </td>
+                    </tr>`;
             });
         }
 
-        // --- BORRAR SUGERENCIA ---
-        window.borrarSugerencia = async (id) => {
-            if(confirm("¿Borrar esta sugerencia?")) await deleteDoc(doc(db, "sugerencias", id));
-        };
-
-        // --- LÓGICA DE BORRADO DE VENTA CON DEVOLUCIÓN DE STOCK ---
-        window.borrarVenta = async (id) => {
-            if(!confirm("¿Eliminar venta y DEVOLVER STOCK?")) return;
+        // --- CAMBIAR ESTADO DE PAGO ---
+        window.togglePago = async (id, estadoActual) => {
             try {
-                const ventaRef = doc(db, "ventas", id);
-                const ventaSnap = await getDoc(ventaRef);
-                if (!ventaSnap.exists()) return alert("Error: No existe.");
-                
-                const ventaData = ventaSnap.data();
-                const batch = writeBatch(db);
-
-                if (ventaData.detalle) {
-                    ventaData.detalle.forEach(item => {
-                        const prodRef = doc(db, "productos", item.id);
-                        batch.update(prodRef, { stock: increment(item.cantidad) });
-                    });
-                }
-                batch.delete(ventaRef);
-                await batch.commit();
-                alert("Venta eliminada y stock restaurado.");
-            } catch (error) { alert("Error: " + error.message); }
+                await updateDoc(doc(db, "ventas", id), { pagado: !estadoActual });
+            } catch(e) { alert("Error al cambiar estado: " + e.message); }
         };
 
-        // CRUD PRODUCTOS
+        // --- OTROS (Buscador, CRUD, etc.) ---
+        document.getElementById('search-sales').addEventListener('input', (e) => {
+            const t = e.target.value.toLowerCase();
+            const f = historialVentas.filter(v => (v.usuario||"").toLowerCase().includes(t));
+            renderVentas(f);
+        });
+
+        // CRUD Productos (Simplificado para ahorrar espacio, es igual al anterior)
         document.getElementById('product-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const id = document.getElementById('edit-id').value;
@@ -313,64 +377,33 @@
                 stock: Number(document.getElementById('stock').value),
                 img: document.getElementById('img').value
             };
-            if(id) await updateDoc(doc(db, "productos", id), data);
-            else await addDoc(collection(db, "productos"), data);
+            if(id) await updateDoc(doc(db, "productos", id), data); else await addDoc(collection(db, "productos"), data);
             resetForm();
         });
-
         window.editar = (id) => {
             const p = inventario.find(x => x.id === id);
-            document.getElementById('edit-id').value = p.id;
-            document.getElementById('nombre').value = p.nombre;
-            document.getElementById('categoria').value = p.categoria || "";
-            document.getElementById('mejoras').value = p.mejoras || "";
-            document.getElementById('precio').value = p.precio;
-            document.getElementById('stock').value = p.stock;
-            document.getElementById('img').value = p.img;
-            document.getElementById('btn-save').innerText = "Actualizar";
-            document.getElementById('btn-cancel').classList.remove('d-none');
+            document.getElementById('edit-id').value = p.id; document.getElementById('nombre').value = p.nombre; document.getElementById('categoria').value = p.categoria||""; document.getElementById('mejoras').value = p.mejoras||""; document.getElementById('precio').value = p.precio; document.getElementById('stock').value = p.stock; document.getElementById('img').value = p.img; document.getElementById('btn-save').innerText = "Actualizar"; document.getElementById('btn-cancel').classList.remove('d-none');
         };
+        window.resetForm = () => { document.getElementById('product-form').reset(); document.getElementById('edit-id').value = ''; document.getElementById('btn-save').innerText = "Guardar"; document.getElementById('btn-cancel').classList.add('d-none'); };
+        window.borrar = async(id) => { if(confirm("¿Borrar?")) await deleteDoc(doc(db, "productos", id)); };
 
-        window.resetForm = () => {
-            document.getElementById('product-form').reset();
-            document.getElementById('edit-id').value = '';
-            document.getElementById('btn-save').innerText = "Guardar";
-            document.getElementById('btn-cancel').classList.add('d-none');
-        };
-
-        window.borrar = async(id) => { if(confirm("¿Borrar producto?")) await deleteDoc(doc(db, "productos", id)); };
-        
-        // VENTAS Y CLIENTES
-        document.getElementById('search-sales').addEventListener('input', (e) => {
-            const t = e.target.value.toLowerCase();
-            const f = historialVentas.filter(v => (v.usuario||"").toLowerCase().includes(t) || JSON.stringify(v.detalle).toLowerCase().includes(t));
-            renderVentas(f);
-        });
-
-        window.prepEdit = (id) => {
-            const v = historialVentas.find(x => x.id === id);
-            document.getElementById('sale-id').value = v.id;
-            document.getElementById('sale-client').value = v.usuario;
-            document.getElementById('sale-total').value = v.total;
-            new bootstrap.Modal(document.getElementById('editSaleModal')).show();
-        };
-
-        window.guardarVentaEditada = async () => {
-            await updateDoc(doc(db, "ventas", document.getElementById('sale-id').value), {
-                usuario: document.getElementById('sale-client').value,
-                total: Number(document.getElementById('sale-total').value)
-            });
-            bootstrap.Modal.getInstance(document.getElementById('editSaleModal')).hide();
-        };
-
-        document.getElementById('create-client-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
+        // Borrar Venta y Devolver Stock
+        window.borrarVenta = async (id) => {
+            if(!confirm("¿Eliminar venta y RESTAURAR STOCK?")) return;
             try {
-                const c = await createUserWithEmailAndPassword(secondaryAuth, document.getElementById('new-email').value, document.getElementById('new-pass').value);
-                await updateProfile(c.user, { displayName: document.getElementById('new-name').value });
-                await signOut(secondaryAuth); alert("Cliente creado"); document.getElementById('create-client-form').reset();
-            } catch(e) { alert(e.message); }
-        });
+                const vRef = doc(db, "ventas", id);
+                const vSnap = await getDoc(vRef);
+                if (!vSnap.exists()) return;
+                const vData = vSnap.data();
+                const batch = writeBatch(db);
+                if (vData.detalle) vData.detalle.forEach(i => batch.update(doc(db, "productos", i.id), { stock: increment(i.cantidad) }));
+                batch.delete(vRef);
+                await batch.commit(); alert("Eliminado.");
+            } catch (error) { alert(error.message); }
+        };
+
+        window.prepEdit = (id) => { const v = historialVentas.find(x => x.id === id); document.getElementById('sale-id').value = v.id; document.getElementById('sale-client').value = v.usuario; document.getElementById('sale-total').value = v.total; new bootstrap.Modal(document.getElementById('editSaleModal')).show(); };
+        window.guardarVentaEditada = async () => { await updateDoc(doc(db, "ventas", document.getElementById('sale-id').value), { usuario: document.getElementById('sale-client').value, total: Number(document.getElementById('sale-total').value) }); bootstrap.Modal.getInstance(document.getElementById('editSaleModal')).hide(); };
     </script>
 </body>
 </html>
