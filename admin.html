@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Panel Completo</title>
+    <title>Admin - Dashboard Pro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -11,12 +11,12 @@
 
     <div id="login-screen" class="container d-flex justify-content-center align-items-center vh-100">
         <div class="card shadow p-4" style="max-width: 400px; width: 100%;">
-            <div class="text-center mb-3"><i class="fas fa-lock fa-3x text-dark"></i></div>
-            <h4 class="text-center mb-3">Administración</h4>
+            <div class="text-center mb-3"><i class="fas fa-chart-line fa-3x text-primary"></i></div>
+            <h4 class="text-center mb-3">Panel de Control</h4>
             <form id="admin-login-form">
                 <input type="email" id="admin-user" class="form-control mb-2" placeholder="admin@maquipan.cl" required>
                 <input type="password" id="admin-pass" class="form-control mb-3" placeholder="Contraseña" required>
-                <button type="submit" class="btn btn-dark w-100 fw-bold">Entrar</button>
+                <button type="submit" class="btn btn-primary w-100 fw-bold">Entrar</button>
             </form>
             <div id="error-msg" class="alert alert-danger mt-3 d-none text-center small"></div>
         </div>
@@ -25,7 +25,7 @@
     <div id="dashboard-screen" class="d-none">
         <nav class="navbar navbar-dark bg-dark mb-4 sticky-top shadow">
             <div class="container">
-                <a class="navbar-brand fw-bold text-warning" href="#">Panel de Control</a>
+                <a class="navbar-brand fw-bold text-warning" href="#"><i class="fas fa-box-open"></i> Gestión de Stock</a>
                 <div class="d-flex align-items-center">
                     <button onclick="window.logout()" class="btn btn-outline-danger btn-sm me-2">Salir</button>
                     <a href="index.html" class="btn btn-outline-light btn-sm" target="_blank">Ver Tienda</a>
@@ -34,49 +34,86 @@
         </nav>
 
         <div class="container pb-5">
-            
-            <div class="card mb-4 border-primary shadow-sm">
-                <div class="card-header bg-primary text-white fw-bold"><i class="fas fa-user-plus"></i> Crear Nuevo Cliente</div>
-                <div class="card-body">
-                    <form id="create-client-form" class="row g-2">
-                        <div class="col-md-4"><input type="text" id="new-name" class="form-control" placeholder="Nombre Completo" required></div>
-                        <div class="col-md-4"><input type="email" id="new-email" class="form-control" placeholder="Correo Electrónico" required></div>
-                        <div class="col-md-2"><input type="text" id="new-pass" class="form-control" placeholder="Contraseña" required></div>
-                        <div class="col-md-2"><button type="submit" class="btn btn-success w-100 fw-bold">Crear</button></div>
-                    </form>
+
+            <div class="row mb-4 g-3">
+                <div class="col-md-4">
+                    <div class="card text-white bg-success h-100 shadow-sm">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-title text-uppercase mb-0">Valor Inventario</h6>
+                                <small class="text-white-50">Costo total en bodega</small>
+                                <h3 class="mb-0 fw-bold mt-2" id="kpi-valor">$0</h3>
+                            </div>
+                            <i class="fas fa-money-bill-wave fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-danger h-100 shadow-sm">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-title text-uppercase mb-0">Stock Crítico</h6>
+                                <small class="text-white-50">Productos con < 5 un.</small>
+                                <h3 class="mb-0 fw-bold mt-2" id="kpi-critico">0</h3>
+                            </div>
+                            <i class="fas fa-exclamation-triangle fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-info h-100 shadow-sm">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-title text-uppercase mb-0">Total Ventas</h6>
+                                <small class="text-white-50">Acumulado histórico</small>
+                                <h3 class="mb-0 fw-bold mt-2" id="kpi-ventas">$0</h3>
+                            </div>
+                            <i class="fas fa-cash-register fa-2x opacity-50"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div class="row mb-4">
                 <div class="col-md-4 mb-4">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-header bg-secondary text-white fw-bold">Producto</div>
+                    <div class="card shadow-sm h-100 border-0">
+                        <div class="card-header bg-dark text-white fw-bold"><i class="fas fa-plus"></i> Producto / Edición</div>
                         <div class="card-body">
                             <form id="product-form">
                                 <input type="hidden" id="edit-id">
                                 <div class="mb-2"><input type="text" id="nombre" class="form-control" placeholder="Nombre Producto" required></div>
-                                <div class="mb-2">
-                                    <input type="text" id="mejoras" class="form-control form-control-sm" placeholder="Detalle (Ej: Sin azúcar)">
-                                </div>
+                                <div class="mb-2"><input type="text" id="mejoras" class="form-control form-control-sm" placeholder="Detalle (Ej: Sin azúcar)"></div>
                                 <div class="row g-2 mb-2">
                                     <div class="col-6"><input type="number" id="precio" class="form-control" placeholder="Precio" required></div>
                                     <div class="col-6"><input type="number" id="stock" class="form-control" placeholder="Stock" required></div>
                                 </div>
                                 <div class="mb-3"><input type="url" id="img" class="form-control" placeholder="URL Imagen" required></div>
-                                <button type="submit" class="btn btn-dark w-100" id="btn-save">Guardar</button>
+                                <button type="submit" class="btn btn-primary w-100 fw-bold" id="btn-save">Guardar Producto</button>
                                 <button type="button" class="btn btn-secondary w-100 mt-2 d-none" id="btn-cancel" onclick="resetForm()">Cancelar</button>
+                            </form>
+                            
+                            <hr>
+                            <h6 class="fw-bold text-muted mb-2"><i class="fas fa-user-plus"></i> Registrar Cliente</h6>
+                            <form id="create-client-form" class="row g-2">
+                                <div class="col-12"><input type="text" id="new-name" class="form-control form-control-sm" placeholder="Nombre" required></div>
+                                <div class="col-6"><input type="email" id="new-email" class="form-control form-control-sm" placeholder="Correo" required></div>
+                                <div class="col-6"><input type="text" id="new-pass" class="form-control form-control-sm" placeholder="Clave" required></div>
+                                <div class="col-12"><button type="submit" class="btn btn-sm btn-outline-success w-100">Crear Usuario</button></div>
                             </form>
                         </div>
                     </div>
                 </div>
 
                 <div class="col-md-8">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-header bg-white fw-bold">Inventario Actual</div>
+                    <div class="card shadow-sm h-100 border-0">
+                        <div class="card-header bg-white fw-bold d-flex justify-content-between align-items-center">
+                            <span>Inventario Actual</span>
+                            <span class="badge bg-secondary" id="total-items-count">0 productos</span>
+                        </div>
                         <div class="card-body p-0">
-                            <div class="table-responsive" style="height: 400px; overflow: auto;">
+                            <div class="table-responsive" style="height: 450px; overflow: auto;">
                                 <table class="table table-hover align-middle mb-0">
-                                    <thead class="table-light sticky-top"><tr><th>Img</th><th>Producto</th><th>Detalle</th><th>Stock</th><th>Acción</th></tr></thead>
+                                    <thead class="table-light sticky-top"><tr><th>Img</th><th>Producto</th><th>Stock</th><th>Valor</th><th>Acción</th></tr></thead>
                                     <tbody id="products-table"></tbody>
                                 </table>
                             </div>
@@ -85,9 +122,19 @@
                 </div>
             </div>
 
-            <div class="card shadow-sm border-success">
-                <div class="card-header bg-success text-white fw-bold d-flex justify-content-between align-items-center">
-                    <span><i class="fas fa-shopping-cart"></i> Registro de Ventas</span>
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h5 class="mb-0 fw-bold text-primary"><i class="fas fa-history"></i> Historial de Ventas</h5>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="fas fa-search"></i></span>
+                                <input type="text" id="search-sales" class="form-control border-start-0" placeholder="Buscar por producto, cliente o fecha...">
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -96,9 +143,10 @@
                                 <tr>
                                     <th>Fecha</th>
                                     <th>Cliente</th>
-                                    <th>Detalle</th>
+                                    <th>Productos Vendidos</th>
                                     <th class="text-end">Total</th>
-                                    <th class="text-end">Acciones</th> </tr>
+                                    <th class="text-end">Acciones</th>
+                                </tr>
                             </thead>
                             <tbody id="sales-table">
                                 <tr><td colspan="5" class="text-center py-3">Cargando ventas...</td></tr>
@@ -115,43 +163,25 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-warning">
-                    <h5 class="modal-title fw-bold">Editar Información de Venta</h5>
+                    <h5 class="modal-title fw-bold">Corregir Venta</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form id="edit-sale-form">
                         <input type="hidden" id="sale-id">
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Nombre Cliente</label>
-                            <input type="text" id="sale-client" class="form-control">
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Correo Cliente</label>
-                            <input type="email" id="sale-email" class="form-control">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Total Pagado ($)</label>
-                            <input type="number" id="sale-total" class="form-control fw-bold">
-                        </div>
-
-                        <div class="alert alert-info small">
-                            Nota: Editar el total aquí no afecta el stock, solo actualiza el registro visual de esta venta.
-                        </div>
+                        <div class="mb-3"><label>Cliente</label><input type="text" id="sale-client" class="form-control"></div>
+                        <div class="mb-3"><label>Total ($)</label><input type="number" id="sale-total" class="form-control fw-bold"></div>
+                        <p class="text-muted small">Nota: Esto solo corrige el registro, no devuelve el stock.</p>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary fw-bold" onclick="window.guardarVentaEditada()">Guardar Cambios</button>
+                    <button type="button" class="btn btn-primary" onclick="window.guardarVentaEditada()">Guardar</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, updateDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -176,16 +206,16 @@
         const clp = new Intl.NumberFormat('es-CL', {style:'currency', currency:'CLP'});
         
         let inventario = [];
-        let ventasCargadas = []; // Para tener referencia rápida al editar
+        let historialVentas = []; // Guardamos todas las ventas aquí para filtrar
 
-        // 1. LOGIN
+        // --- AUTH ---
         document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             try {
                 await signInWithEmailAndPassword(auth, document.getElementById('admin-user').value, document.getElementById('admin-pass').value);
             } catch (error) {
-                document.getElementById('error-msg').innerText = "Credenciales incorrectas.";
                 document.getElementById('error-msg').classList.remove('d-none');
+                document.getElementById('error-msg').innerText = "Credenciales incorrectas";
             }
         });
         window.logout = () => signOut(auth).then(()=>location.reload());
@@ -194,14 +224,131 @@
             if (user && ADMIN_EMAILS.includes(user.email)) {
                 document.getElementById('login-screen').classList.add('d-none');
                 document.getElementById('dashboard-screen').classList.remove('d-none');
-                cargarProductos();
-                cargarVentas();
+                initApp();
             } else if (user) {
-                alert("Acceso denegado."); signOut(auth);
+                alert("Sin permisos"); signOut(auth);
             }
         });
 
-        // 2. CREAR CLIENTE
+        function initApp() {
+            cargarProductos();
+            cargarVentas();
+        }
+
+        // --- 1. PRODUCTOS Y KPI DE INVENTARIO ---
+        function cargarProductos() {
+            onSnapshot(collection(db, "productos"), (snap) => {
+                inventario = [];
+                let valorTotal = 0;
+                let criticos = 0;
+                const tbody = document.getElementById('products-table');
+                tbody.innerHTML = '';
+                
+                snap.forEach(d => {
+                    const p = { id: d.id, ...d.data() };
+                    inventario.push(p);
+                    
+                    // Cálculos
+                    valorTotal += (p.precio * p.stock);
+                    if(p.stock < 5) criticos++;
+
+                    // Color de fila según stock
+                    let rowClass = "";
+                    if(p.stock <= 0) rowClass = "table-secondary opacity-50"; // Agotado
+                    else if(p.stock < 5) rowClass = "table-danger"; // Crítico
+
+                    tbody.innerHTML += `
+                        <tr class="${rowClass}">
+                            <td><img src="${p.img}" width="35" height="35" style="object-fit:cover; border-radius:4px;"></td>
+                            <td>
+                                <div class="fw-bold">${p.nombre}</div>
+                                <small class="text-muted">${p.mejoras || ''}</small>
+                            </td>
+                            <td class="fw-bold">${p.stock}</td>
+                            <td>${clp.format(p.precio * p.stock)}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary py-0" onclick="window.editar('${p.id}')"><i class="fas fa-pen"></i></button>
+                                <button class="btn btn-sm btn-danger py-0" onclick="window.borrar('${p.id}')"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>`;
+                });
+
+                // Actualizar KPIs
+                document.getElementById('kpi-valor').innerText = clp.format(valorTotal);
+                document.getElementById('kpi-critico').innerText = criticos;
+                document.getElementById('total-items-count').innerText = inventario.length + " productos";
+            });
+        }
+
+        // --- 2. VENTAS Y KPI DE INGRESOS ---
+        function cargarVentas() {
+            const q = query(collection(db, "ventas"), orderBy("fecha", "desc"));
+            
+            onSnapshot(q, (snapshot) => {
+                historialVentas = [];
+                let totalVentasHistorico = 0;
+                
+                snapshot.forEach(doc => {
+                    const v = { id: doc.id, ...doc.data() };
+                    historialVentas.push(v);
+                    totalVentasHistorico += (v.total || 0);
+                });
+
+                document.getElementById('kpi-ventas').innerText = clp.format(totalVentasHistorico);
+                renderizarVentas(historialVentas); // Mostrar todas al inicio
+
+            }, (error) => console.error(error));
+        }
+
+        function renderizarVentas(lista) {
+            const tbody = document.getElementById('sales-table');
+            if (lista.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">No se encontraron ventas.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = '';
+
+            lista.forEach(venta => {
+                let fechaStr = venta.fecha ? venta.fecha.toDate().toLocaleString('es-CL') : "---";
+                let itemsStr = "";
+                if (venta.detalle && Array.isArray(venta.detalle)) {
+                    // Texto plano para búsqueda y HTML para visualización
+                    itemsStr = venta.detalle.map(i => `<span class="badge bg-secondary me-1">${i.cantidad}x ${i.nombre}</span>`).join("");
+                }
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="small">${fechaStr}</td>
+                        <td>
+                            <div class="fw-bold">${venta.usuario || 'Anónimo'}</div>
+                            <div class="small text-muted">${venta.email || ''}</div>
+                        </td>
+                        <td>${itemsStr}</td>
+                        <td class="text-end fw-bold text-success">${clp.format(venta.total)}</td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-light border" onclick="window.prepararEdicionVenta('${venta.id}')"><i class="fas fa-pen text-warning"></i></button>
+                            <button class="btn btn-sm btn-light border ms-1" onclick="window.borrarVenta('${venta.id}')"><i class="fas fa-trash text-danger"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // --- 3. BUSCADOR DE VENTAS ---
+        document.getElementById('search-sales').addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtradas = historialVentas.filter(v => {
+                // Buscamos en nombre cliente, email o productos
+                const cliente = (v.usuario || "").toLowerCase();
+                const email = (v.email || "").toLowerCase();
+                const productos = JSON.stringify(v.detalle).toLowerCase(); // Truco rápido para buscar en el array
+                return cliente.includes(term) || email.includes(term) || productos.includes(term);
+            });
+            renderizarVentas(filtradas);
+        });
+
+        // --- 4. GESTIÓN (CRUD) ---
+        // Crear cliente
         document.getElementById('create-client-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const name = document.getElementById('new-name').value;
@@ -214,137 +361,7 @@
             } catch (e) { alert(e.message); }
         });
 
-        // 3. PRODUCTOS
-        function cargarProductos() {
-            onSnapshot(collection(db, "productos"), (snap) => {
-                inventario = [];
-                const tbody = document.getElementById('products-table');
-                tbody.innerHTML = '';
-                snap.forEach(d => {
-                    const p = { id: d.id, ...d.data() };
-                    inventario.push(p);
-                    tbody.innerHTML += `
-                        <tr>
-                            <td><img src="${p.img}" width="30"></td>
-                            <td>${p.nombre}</td>
-                            <td><small class="text-muted">${p.mejoras || ''}</small></td>
-                            <td>${p.stock}</td>
-                            <td>
-                                <button class="btn btn-sm btn-primary" onclick="window.editar('${p.id}')"><i class="fas fa-pen"></i></button>
-                                <button class="btn btn-sm btn-danger" onclick="window.borrar('${p.id}')"><i class="fas fa-trash"></i></button>
-                            </td>
-                        </tr>`;
-                });
-            });
-        }
-
-        // 4. VENTAS (CON EDICIÓN)
-        function cargarVentas() {
-            const q = query(collection(db, "ventas"), orderBy("fecha", "desc"));
-            
-            onSnapshot(q, (snapshot) => {
-                const tbody = document.getElementById('sales-table');
-                ventasCargadas = []; // Reiniciamos lista local
-
-                if (snapshot.empty) {
-                    tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">No hay ventas registradas aún.</td></tr>';
-                    return;
-                }
-
-                tbody.innerHTML = '';
-
-                snapshot.forEach(doc => {
-                    const venta = { id: doc.id, ...doc.data() };
-                    ventasCargadas.push(venta);
-                    
-                    let fechaStr = "---";
-                    if(venta.fecha) fechaStr = venta.fecha.toDate().toLocaleString('es-CL');
-
-                    let productosHtml = "";
-                    if (venta.detalle && Array.isArray(venta.detalle)) {
-                        productosHtml = venta.detalle.map(item => 
-                            `<span class="badge bg-secondary me-1 mb-1">${item.cantidad}x ${item.nombre || item.producto}</span>`
-                        ).join("");
-                    }
-
-                    tbody.innerHTML += `
-                        <tr>
-                            <td class="small">${fechaStr}</td>
-                            <td>
-                                <div class="fw-bold text-dark">${venta.usuario_nombre || venta.usuario || 'Anónimo'}</div>
-                                <div class="small text-muted" style="font-size:0.8rem">${venta.usuario_email || venta.email || ''}</div>
-                            </td>
-                            <td>${productosHtml}</td>
-                            <td class="text-end fw-bold text-success">${clp.format(venta.total)}</td>
-                            <td class="text-end">
-                                <button class="btn btn-sm btn-warning" onclick="window.prepararEdicionVenta('${venta.id}')" title="Editar Info"><i class="fas fa-pen"></i></button>
-                                <button class="btn btn-sm btn-danger ms-1" onclick="window.borrarVenta('${venta.id}')" title="Eliminar Registro"><i class="fas fa-trash"></i></button>
-                            </td>
-                        </tr>
-                    `;
-                });
-            }, (error) => {
-                console.error("Error ventas:", error);
-            });
-        }
-
-        // --- LÓGICA DE EDICIÓN DE VENTAS ---
-        
-        // A. Abrir el modal con los datos
-        window.prepararEdicionVenta = (id) => {
-            const venta = ventasCargadas.find(v => v.id === id);
-            if (!venta) return;
-
-            document.getElementById('sale-id').value = venta.id;
-            // Soportamos ambos nombres de campo por si acaso (usuario_nombre o usuario)
-            document.getElementById('sale-client').value = venta.usuario_nombre || venta.usuario || "";
-            document.getElementById('sale-email').value = venta.usuario_email || venta.email || "";
-            document.getElementById('sale-total').value = venta.total || 0;
-
-            const modal = new bootstrap.Modal(document.getElementById('editSaleModal'));
-            modal.show();
-        };
-
-        // B. Guardar los cambios en Firebase
-        window.guardarVentaEditada = async () => {
-            const id = document.getElementById('sale-id').value;
-            const nuevoCliente = document.getElementById('sale-client').value;
-            const nuevoEmail = document.getElementById('sale-email').value;
-            const nuevoTotal = Number(document.getElementById('sale-total').value);
-
-            try {
-                const ventaRef = doc(db, "ventas", id);
-                await updateDoc(ventaRef, {
-                    usuario: nuevoCliente,      // Actualizamos ambos campos por compatibilidad
-                    usuario_nombre: nuevoCliente,
-                    email: nuevoEmail,
-                    usuario_email: nuevoEmail,
-                    total: nuevoTotal
-                });
-
-                // Cerrar modal
-                const modalEl = document.getElementById('editSaleModal');
-                const modal = bootstrap.Modal.getInstance(modalEl);
-                modal.hide();
-
-                alert("Venta actualizada correctamente.");
-            } catch (error) {
-                alert("Error al actualizar: " + error.message);
-            }
-        };
-
-        // C. Borrar venta
-        window.borrarVenta = async (id) => {
-            if(confirm("¿Estás seguro de eliminar este registro de venta de forma permanente?")) {
-                try {
-                    await deleteDoc(doc(db, "ventas", id));
-                } catch (error) {
-                    alert("Error al eliminar: " + error.message);
-                }
-            }
-        };
-
-        // LÓGICA PRODUCTOS (Guardar/Borrar)
+        // Producto
         document.getElementById('product-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const id = document.getElementById('edit-id').value;
@@ -360,8 +377,7 @@
             resetForm();
         });
 
-        window.borrar = async(id) => { if(confirm("¿Borrar?")) await deleteDoc(doc(db, "productos", id)); };
-        
+        window.borrar = async(id) => { if(confirm("¿Eliminar producto?")) await deleteDoc(doc(db, "productos", id)); };
         window.editar = (id) => {
             const p = inventario.find(x => x.id === id);
             document.getElementById('edit-id').value = p.id;
@@ -373,13 +389,33 @@
             document.getElementById('btn-save').innerText = "Actualizar";
             document.getElementById('btn-cancel').classList.remove('d-none');
         };
-
         window.resetForm = () => {
             document.getElementById('product-form').reset();
             document.getElementById('edit-id').value = '';
-            document.getElementById('btn-save').innerText = "Guardar";
+            document.getElementById('btn-save').innerText = "Guardar Producto";
             document.getElementById('btn-cancel').classList.add('d-none');
         };
+
+        // Ventas
+        window.prepararEdicionVenta = (id) => {
+            const v = historialVentas.find(x => x.id === id);
+            document.getElementById('sale-id').value = v.id;
+            document.getElementById('sale-client').value = v.usuario || "";
+            document.getElementById('sale-total').value = v.total || 0;
+            new bootstrap.Modal(document.getElementById('editSaleModal')).show();
+        };
+        window.guardarVentaEditada = async () => {
+            const id = document.getElementById('sale-id').value;
+            try {
+                await updateDoc(doc(db, "ventas", id), {
+                    usuario: document.getElementById('sale-client').value,
+                    total: Number(document.getElementById('sale-total').value)
+                });
+                bootstrap.Modal.getInstance(document.getElementById('editSaleModal')).hide();
+            } catch(e) { alert(e.message); }
+        };
+        window.borrarVenta = async (id) => { if(confirm("¿Eliminar historial?")) await deleteDoc(doc(db, "ventas", id)); };
+
     </script>
 </body>
 </html>
