@@ -50,13 +50,43 @@
         
         <div id="login-container" class="card login-card shadow">
             <div class="card-body p-4">
-                <h4 class="text-center mb-3 fw-bold text-primary">Acceso Clientes</h4>
-                <form id="login-form">
-                    <div class="mb-3"><input type="email" id="login-email" class="form-control" placeholder="Correo" required></div>
-                    <div class="mb-3"><input type="password" id="login-pass" class="form-control" placeholder="Contraseña" required></div>
-                    <button type="submit" class="btn btn-primary w-100 fw-bold">Ingresar</button>
-                </form>
-                <div id="login-error" class="alert alert-danger mt-3 d-none text-center p-1">Credenciales incorrectas</div>
+                
+                <div id="view-login">
+                    <h4 class="text-center mb-3 fw-bold text-primary">Iniciar Sesión</h4>
+                    <form id="login-form">
+                        <div class="mb-3"><input type="email" id="login-email" class="form-control" placeholder="Correo electrónico" required></div>
+                        <div class="mb-3"><input type="password" id="login-pass" class="form-control" placeholder="Contraseña" required></div>
+                        <button type="submit" class="btn btn-primary w-100 fw-bold">Entrar</button>
+                    </form>
+                    <div class="text-center mt-3 border-top pt-3">
+                        <p class="small text-muted mb-1">¿No tienes cuenta?</p>
+                        <button onclick="window.toggleForms()" class="btn btn-sm btn-outline-success fw-bold">Crear Cuenta Nueva</button>
+                    </div>
+                </div>
+
+                <div id="view-register" class="d-none">
+                    <h4 class="text-center mb-3 fw-bold text-success">Crear Cuenta</h4>
+                    <form id="register-form">
+                        <div class="mb-3">
+                            <label class="form-label small">Nombre Completo</label>
+                            <input type="text" id="reg-name" class="form-control" placeholder="Ej: Juan Pérez" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small">Correo Electrónico</label>
+                            <input type="email" id="reg-email" class="form-control" placeholder="juan@gmail.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small">Contraseña</label>
+                            <input type="password" id="reg-pass" class="form-control" placeholder="Mínimo 6 caracteres" required minlength="6">
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 fw-bold">Registrarme</button>
+                    </form>
+                    <div class="text-center mt-3 border-top pt-3">
+                        <button onclick="window.toggleForms()" class="btn btn-sm btn-link text-decoration-none">Volver al Login</button>
+                    </div>
+                </div>
+
+                <div id="login-error" class="alert alert-danger mt-3 d-none text-center p-2 small"></div>
             </div>
         </div>
 
@@ -133,8 +163,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, onSnapshot, doc, increment, writeBatch, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        // Importamos updatePassword
-        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, updatePassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        // AÑADIMOS createUserWithEmailAndPassword y updateProfile
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, signOut, onAuthStateChanged, updatePassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDLPcKBki7SgEDqGoU2zGmvynmdRIaqYOA",
@@ -152,15 +182,63 @@
         let inventario = [], carrito = JSON.parse(localStorage.getItem('cart')) || [], usuario = null;
         const clp = new Intl.NumberFormat('es-CL', {style:'currency', currency:'CLP'});
 
-        // 1. LOGIN
+        // 1. LOGICA DE VISTAS (LOGIN VS REGISTRO)
+        window.toggleForms = () => {
+            const loginView = document.getElementById('view-login');
+            const regView = document.getElementById('view-register');
+            const errorDiv = document.getElementById('login-error');
+            
+            errorDiv.classList.add('d-none'); // Limpiar errores
+
+            if (loginView.classList.contains('d-none')) {
+                loginView.classList.remove('d-none');
+                regView.classList.add('d-none');
+            } else {
+                loginView.classList.add('d-none');
+                regView.classList.remove('d-none');
+            }
+        };
+
+        // 2. INICIAR SESIÓN
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             try {
                 await signInWithEmailAndPassword(auth, document.getElementById('login-email').value, document.getElementById('login-pass').value);
             } catch (err) {
-                document.getElementById('login-error').classList.remove('d-none');
+                mostrarError("Usuario o contraseña incorrectos.");
             }
         });
+
+        // 3. REGISTRARSE (NUEVO)
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const pass = document.getElementById('reg-pass').value;
+
+            try {
+                // Crear usuario en Firebase
+                const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                // Guardar el nombre visible
+                await updateProfile(userCredential.user, { displayName: name });
+                
+                // (Opcional) Firebase hace login automático al crear, así que el onAuthStateChanged se encargará del resto
+                alert("¡Cuenta creada con éxito! Bienvenido " + name);
+                
+            } catch (error) {
+                console.error(error);
+                let msg = "Error al registrarse.";
+                if (error.code === 'auth/email-already-in-use') msg = "El correo ya está registrado. Intenta iniciar sesión.";
+                if (error.code === 'auth/weak-password') msg = "La contraseña debe tener al menos 6 caracteres.";
+                mostrarError(msg);
+            }
+        });
+
+        function mostrarError(msg) {
+            const el = document.getElementById('login-error');
+            el.innerText = msg;
+            el.classList.remove('d-none');
+        }
 
         window.logout = () => signOut(auth);
 
@@ -169,19 +247,19 @@
                 usuario = user;
                 document.getElementById('login-container').classList.add('d-none');
                 document.getElementById('catalog-section').classList.remove('d-none');
-                document.getElementById('user-actions').classList.remove('d-none'); // Mostrar botones
-                document.getElementById('user-display').innerText = "Hola, " + user.displayName;
+                document.getElementById('user-actions').classList.remove('d-none');
+                document.getElementById('user-display').innerText = "Hola, " + (user.displayName || "Cliente");
                 cargarProductos();
             } else {
                 usuario = null;
                 document.getElementById('login-container').classList.remove('d-none');
                 document.getElementById('catalog-section').classList.add('d-none');
-                document.getElementById('user-actions').classList.add('d-none'); // Ocultar botones
+                document.getElementById('user-actions').classList.add('d-none');
                 document.getElementById('user-display').innerText = "";
             }
         });
 
-        // --- LÓGICA DE CAMBIO DE CONTRASEÑA ---
+        // 4. LÓGICA DE CAMBIO DE CONTRASEÑA
         window.abrirModalPassword = () => {
             const modal = new bootstrap.Modal(document.getElementById('passwordModal'));
             modal.show();
@@ -192,39 +270,26 @@
             const p1 = document.getElementById('new-password').value;
             const p2 = document.getElementById('confirm-password').value;
 
-            if (p1 !== p2) {
-                alert("Las contraseñas no coinciden.");
-                return;
-            }
-
-            if (p1.length < 6) {
-                alert("La contraseña debe tener al menos 6 caracteres.");
-                return;
-            }
-
+            if (p1 !== p2) return alert("Las contraseñas no coinciden.");
+            
             try {
-                // Función de Firebase para actualizar clave
                 await updatePassword(auth.currentUser, p1);
-                
-                alert("¡Contraseña actualizada correctamente!");
-                // Cerramos modal y limpiamos
+                alert("¡Contraseña actualizada!");
                 const modalEl = document.getElementById('passwordModal');
                 const modal = bootstrap.Modal.getInstance(modalEl);
                 modal.hide();
                 document.getElementById('change-pass-form').reset();
-
             } catch (error) {
-                console.error(error);
                 if (error.code === 'auth/requires-recent-login') {
-                    alert("Por seguridad, como hace mucho iniciaste sesión, debes SALIR y volver a ENTRAR para cambiar tu clave.");
+                    alert("Por seguridad, debes salir y volver a entrar para cambiar tu clave.");
                     window.logout();
                 } else {
-                    alert("Error al cambiar contraseña: " + error.message);
+                    alert("Error: " + error.message);
                 }
             }
         });
 
-        // 2. PRODUCTOS
+        // 5. PRODUCTOS
         function cargarProductos() {
             onSnapshot(collection(db, "productos"), (snap) => {
                 inventario = [];
@@ -276,7 +341,7 @@
             input.value = val;
         };
 
-        // 3. CARRITO
+        // 6. CARRITO
         window.add = (id) => {
             const p = inventario.find(x=>x.id==id);
             const item = carrito.find(x=>x.id==id);
@@ -304,7 +369,7 @@
             document.getElementById('cart-total').innerText = clp.format(total);
         }
 
-        // 4. PAGO
+        // 7. PAGO
         window.mostrarDatosPago = () => {
             if(!carrito.length) return alert("Carrito vacío");
             document.getElementById('cart-view').classList.add('d-none');
