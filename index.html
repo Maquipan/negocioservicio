@@ -8,39 +8,25 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; min-height: 100vh; }
-        
-        /* Carrusel */
         .carousel-item { height: 350px; background-color: #2c3e50; }
         .carousel-item img { object-fit: cover; height: 100%; opacity: 0.7; }
         .text-shadow { text-shadow: 2px 2px 4px rgba(0,0,0,0.9); }
-
-        /* Login */
         .login-card { max-width: 400px; margin: -50px auto 30px; z-index: 10; position: relative; border-radius: 15px; overflow: hidden; }
-        
-        /* Productos */
         .card-product { transition: transform 0.2s; border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .card-product:hover { transform: translateY(-5px); box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
         .card-img-top { height: 180px; object-fit: contain; padding: 15px; position: relative; }
-        
-        /* Botón Favorito en la tarjeta */
         .btn-fav { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.8); border-radius: 50%; width: 35px; height: 35px; border: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: 0.3s; z-index: 5; }
         .btn-fav:hover { transform: scale(1.1); }
         .btn-fav.active { color: #e74c3c; }
         .btn-fav.inactive { color: #ccc; }
-
         .price-tag { color: #d35400; font-weight: 800; font-size: 1.3rem; }
         .mejoras-tag { font-size: 0.75rem; color: #d35400; background: #ffeaa7; padding: 2px 8px; border-radius: 12px; display: inline-block; margin-bottom: 5px; font-weight: 600; }
         .cat-tag { font-size: 0.7rem; color: #636e72; text-transform: uppercase; letter-spacing: 1px; }
-
-        /* Filtros */
         #category-filters { -ms-overflow-style: none; scrollbar-width: none; white-space: nowrap; padding-bottom: 10px; }
         #category-filters::-webkit-scrollbar { display: none; }
-
-        /* Footer */
         footer { margin-top: auto; background-color: #2c3e50; color: #b2bec3; padding: 40px 0 20px; }
         footer a { color: #b2bec3; text-decoration: none; transition: 0.3s; }
         footer a:hover { color: #e67e22; }
-
         .float-wa { position: fixed; bottom: 90px; right: 20px; background-color: #25d366; color: #FFF; width: 60px; height: 60px; border-radius: 50%; text-align: center; font-size: 30px; box-shadow: 2px 2px 3px #999; z-index: 100; display: flex; align-items: center; justify-content: center; text-decoration: none; }
     </style>
 </head>
@@ -52,8 +38,11 @@
             <div class="d-flex align-items-center">
                 <span id="user-display" class="text-white me-3 small d-none d-md-inline"></span>
                 <div id="user-actions" class="d-none me-2">
-                    <button onclick="window.abrirMisPedidos()" class="btn btn-sm btn-outline-light me-1" title="Historial"><i class="fas fa-receipt"></i></button>
-                    <button onclick="window.abrirSugerencias()" class="btn btn-sm btn-outline-info me-1" title="Sugerir Producto"><i class="fas fa-lightbulb"></i></button>
+                    <button onclick="window.abrirMisPedidos()" class="btn btn-sm btn-outline-light me-1 position-relative" title="Historial y Deudas">
+                        <i class="fas fa-receipt"></i>
+                        <span id="debt-badge" class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle d-none"></span>
+                    </button>
+                    <button onclick="window.abrirSugerencias()" class="btn btn-sm btn-outline-info me-1" title="Sugerir"><i class="fas fa-lightbulb"></i></button>
                     <button onclick="window.abrirModalPassword()" class="btn btn-sm btn-outline-warning me-1" title="Clave"><i class="fas fa-key"></i></button>
                     <button onclick="window.logout()" class="btn btn-sm btn-outline-danger" title="Salir"><i class="fas fa-sign-out-alt"></i></button>
                 </div>
@@ -74,24 +63,15 @@
         <div class="carousel-inner">
             <div class="carousel-item active">
                 <img src="https://placehold.co/1200x400/d35400/fff?text=Pausa+Activa" class="d-block w-100">
-                <div class="carousel-caption d-none d-md-block">
-                    <h2 class="fw-bold text-shadow">¡Haz una pausa en la pega!</h2>
-                    <p class="text-shadow fs-5">Tómate 5 minutos y disfruta un snack rico.</p>
-                </div>
+                <div class="carousel-caption d-none d-md-block"><h2 class="fw-bold text-shadow">¡Haz una pausa!</h2><p class="text-shadow fs-5">Disfruta un snack rico.</p></div>
             </div>
             <div class="carousel-item">
                 <img src="https://placehold.co/1200x400/2980b9/fff?text=Energia+para+el+Equipo" class="d-block w-100">
-                <div class="carousel-caption d-none d-md-block">
-                    <h2 class="fw-bold text-shadow">Energía para el Servicio Técnico</h2>
-                    <p class="text-shadow fs-5">Bebidas frías y snacks para seguir con todo.</p>
-                </div>
+                <div class="carousel-caption d-none d-md-block"><h2 class="fw-bold text-shadow">Energía Maquipan</h2><p class="text-shadow fs-5">Bebidas frías.</p></div>
             </div>
             <div class="carousel-item">
                 <img src="https://placehold.co/1200x400/27ae60/fff?text=Aqui+Mismo" class="d-block w-100">
-                <div class="carousel-caption d-none d-md-block">
-                    <h2 class="fw-bold text-shadow">Directo en la Oficina</h2>
-                    <p class="text-shadow fs-5">Elige, paga y disfruta al instante.</p>
-                </div>
+                <div class="carousel-caption d-none d-md-block"><h2 class="fw-bold text-shadow">Kiosco Interno</h2><p class="text-shadow fs-5">Autoservicio de confianza.</p></div>
             </div>
         </div>
         <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev"><span class="carousel-control-prev-icon"></span></button>
@@ -99,26 +79,23 @@
     </div>
 
     <main class="container pb-5">
-        
         <div id="login-container" class="card login-card shadow">
             <div class="card-body p-4">
                 <div id="view-login">
                     <h4 class="text-center mb-3 fw-bold text-dark">Acceso Equipo Maquipan</h4>
                     <form id="login-form">
-                        <div class="form-floating mb-2"><input type="email" id="login-email" class="form-control" placeholder="name@example.com" required><label>Correo</label></div>
-                        <div class="form-floating mb-3"><input type="password" id="login-pass" class="form-control" placeholder="Password" required><label>Contraseña</label></div>
+                        <div class="form-floating mb-2"><input type="email" id="login-email" class="form-control" placeholder="c" required><label>Correo</label></div>
+                        <div class="form-floating mb-3"><input type="password" id="login-pass" class="form-control" placeholder="p" required><label>Contraseña</label></div>
                         <button type="submit" class="btn btn-primary w-100 fw-bold py-2">Ingresar</button>
                     </form>
-                    <div class="text-center mt-3 pt-2 border-top">
-                        <small class="text-muted">¿Primera vez?</small> <button onclick="window.toggleForms()" class="btn btn-sm btn-link fw-bold text-decoration-none">Crear Cuenta</button>
-                    </div>
+                    <div class="text-center mt-3 pt-2 border-top"><button onclick="window.toggleForms()" class="btn btn-sm btn-link fw-bold text-decoration-none">Crear Cuenta</button></div>
                 </div>
                 <div id="view-register" class="d-none">
                     <h4 class="text-center mb-3 fw-bold text-success">Registro Compañeros</h4>
                     <form id="register-form">
-                        <div class="form-floating mb-2"><input type="text" id="reg-name" class="form-control" placeholder="Nombre" required><label>Nombre y Apellido</label></div>
-                        <div class="form-floating mb-2"><input type="email" id="reg-email" class="form-control" placeholder="Correo" required><label>Correo</label></div>
-                        <div class="form-floating mb-3"><input type="password" id="reg-pass" class="form-control" placeholder="Clave" required minlength="6"><label>Clave</label></div>
+                        <div class="form-floating mb-2"><input type="text" id="reg-name" class="form-control" placeholder="n" required><label>Nombre</label></div>
+                        <div class="form-floating mb-2"><input type="email" id="reg-email" class="form-control" placeholder="c" required><label>Correo</label></div>
+                        <div class="form-floating mb-3"><input type="password" id="reg-pass" class="form-control" placeholder="p" required minlength="6"><label>Clave</label></div>
                         <button type="submit" class="btn btn-success w-100 fw-bold py-2">Registrarme</button>
                     </form>
                     <div class="text-center mt-3 pt-2 border-top"><button onclick="window.toggleForms()" class="btn btn-sm btn-link text-decoration-none">Volver</button></div>
@@ -128,25 +105,22 @@
         </div>
 
         <div id="catalog-section" class="d-none">
-            
             <div class="d-flex gap-2 overflow-auto mb-4" id="category-filters">
                 <button class="btn btn-dark rounded-pill px-4 fw-bold active" onclick="window.filtrarCategoria('todas', this)">Todo</button>
-                <button class="btn btn-outline-danger rounded-pill px-4 fw-bold" onclick="window.filtrarFavoritos(this)"><i class="fas fa-heart"></i> Mis Favoritos</button>
+                <button class="btn btn-outline-danger rounded-pill px-4 fw-bold" onclick="window.filtrarFavoritos(this)"><i class="fas fa-heart"></i> Favoritos</button>
                 <button class="btn btn-outline-secondary rounded-pill px-4 fw-bold" onclick="window.filtrarCategoria('Bebidas', this)">🥤 Bebidas</button>
                 <button class="btn btn-outline-secondary rounded-pill px-4 fw-bold" onclick="window.filtrarCategoria('Snacks', this)">🍟 Snacks</button>
                 <button class="btn btn-outline-secondary rounded-pill px-4 fw-bold" onclick="window.filtrarCategoria('Cafeteria', this)">☕ Cafetería</button>
                 <button class="btn btn-outline-secondary rounded-pill px-4 fw-bold" onclick="window.filtrarCategoria('Otros', this)">📦 Otros</button>
             </div>
-
             <div class="row mb-4 justify-content-center">
                 <div class="col-md-8">
                     <div class="input-group shadow-sm">
                         <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
-                        <input type="text" id="searchInput" class="form-control border-start-0 py-2" placeholder="¿Qué se te antoja?">
+                        <input type="text" id="searchInput" class="form-control border-start-0 py-2" placeholder="¿Qué buscas hoy?">
                     </div>
                 </div>
             </div>
-
             <div id="product-container" class="row g-4"></div>
         </div>
     </main>
@@ -154,28 +128,15 @@
     <footer>
         <div class="container">
             <div class="row">
-                <div class="col-md-4 mb-4">
-                    <h5 class="text-white"><i class="fas fa-store"></i> Kiosco Maquipan</h5>
-                    <p class="small">El punto de encuentro para el break de la oficina.</p>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <h5 class="text-white">Menú</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#" data-bs-toggle="modal" data-bs-target="#cartModal">Mi Carrito</a></li>
-                        <li><a href="#" onclick="window.abrirMisPedidos()">Mis Compras</a></li>
-                        <li><a href="#" onclick="window.abrirSugerencias()">Sugerir Producto</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <h5 class="text-white">Soporte</h5>
-                    <p class="small"><i class="fas fa-envelope me-2"></i> cpimentel@maquipan.cl</p>
-                </div>
+                <div class="col-md-4 mb-4"><h5 class="text-white"><i class="fas fa-store"></i> Kiosco Maquipan</h5><p class="small">El punto de encuentro para el break de la oficina.</p></div>
+                <div class="col-md-4 mb-4"><h5 class="text-white">Menú</h5><ul class="list-unstyled"><li><a href="#" data-bs-toggle="modal" data-bs-target="#cartModal">Mi Carrito</a></li><li><a href="#" onclick="window.abrirMisPedidos()">Mis Compras</a></li></ul></div>
+                <div class="col-md-4 mb-4"><h5 class="text-white">Soporte</h5><p class="small"><i class="fas fa-envelope me-2"></i> cpimentel@maquipan.cl</p></div>
             </div>
             <div class="text-center mt-3 border-top border-secondary pt-3 small">&copy; 2024 Maquipan Servicios.</div>
         </div>
     </footer>
 
-    <a href="https://wa.me/56966746344" class="float-wa" target="_blank"><i class="fab fa-whatsapp"></i></a>
+    <a href="https://wa.me/56912345678" class="float-wa" target="_blank"><i class="fab fa-whatsapp"></i></a>
 
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
         <div id="liveToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
@@ -186,21 +147,10 @@
     <div class="modal fade" id="sugerenciasModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header bg-info text-white">
-                    <h5 class="modal-title fw-bold">💡 Buzón de Sugerencias</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
+                <div class="modal-header bg-info text-white"><h5 class="modal-title fw-bold">💡 Buzón</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body">
-                    <p class="small text-muted">¿Falta tu snack favorito? ¡Cuéntanos y lo traemos!</p>
-                    <form id="sugerencia-form">
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Producto Sugerido</label>
-                            <input type="text" id="sug-producto" class="form-control" placeholder="Ej: Galletas Tritón" required>
-                        </div>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">Enviar Sugerencia</button>
-                        </div>
-                    </form>
+                    <p class="small text-muted">¿Qué falta en el kiosco?</p>
+                    <form id="sugerencia-form"><input type="text" id="sug-producto" class="form-control mb-3" placeholder="Ej: Galletas Tritón" required><button type="submit" class="btn btn-primary w-100">Enviar</button></form>
                 </div>
             </div>
         </div>
@@ -224,19 +174,35 @@
                             <p class="mb-1"><strong>Cuenta:</strong> 111116972068 (Vista)</p>
                             <p class="mb-0"><strong>Correo:</strong> cpimentel@maquipan.cl</p>
                         </div>
-                        <p class="mt-3 text-muted small"><i class="fas fa-info-circle"></i> Transfiere y avisa por WhatsApp.</p>
+                        <p class="mt-3 text-muted small"><strong>Nota:</strong> Tu pedido quedará como "Pendiente de Pago" hasta que el admin confirme la transferencia.</p>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-outline-secondary" onclick="window.reiniciarModal()" data-bs-dismiss="modal">Seguir</button>
                     <button class="btn btn-primary fw-bold" id="btn-pay" onclick="window.mostrarDatosPago()">Pagar</button>
-                    <button class="btn btn-success fw-bold d-none" id="btn-confirm" onclick="window.finalizarCompra()">Avisar Pago</button>
+                    <button class="btn btn-success fw-bold d-none" id="btn-confirm" onclick="window.finalizarCompra()">Confirmar</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="ordersModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header bg-secondary text-white"><h5 class="modal-title">Historial</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><div id="orders-list">Cargando...</div></div></div></div></div>
+    <div class="modal fade" id="ordersModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header bg-secondary text-white">
+                    <h5 class="modal-title"><i class="fas fa-receipt"></i> Estado de Cuenta</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="debt-alert" class="alert alert-success text-center mb-3">
+                        <i class="fas fa-check-circle"></i> ¡Estás al día! No tienes deuda.
+                    </div>
+                    <div id="orders-list">Cargando...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="passwordModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-warning"><h5 class="modal-title fw-bold">Seguridad</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="change-pass-form"><div class="mb-3"><label>Nueva Clave</label><input type="password" id="new-password" class="form-control" required minlength="6"></div><div class="mb-3"><label>Confirmar</label><input type="password" id="confirm-password" class="form-control" required minlength="6"></div><button type="submit" class="btn btn-dark w-100">Actualizar</button></form></div></div></div></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -259,10 +225,8 @@
         const auth = getAuth(app);
         
         let inventario = [], carrito = JSON.parse(localStorage.getItem('cart')) || [], usuario = null;
-        // FAVORITOS: Usaremos LocalStorage para simplificar y no tocar reglas de DB complejas
         let favoritos = JSON.parse(localStorage.getItem('favs')) || [];
-        
-        let filtroActual = 'todas'; // 'todas', 'favoritos', o nombre de categoria
+        let filtroActual = 'todas';
         const clp = new Intl.NumberFormat('es-CL', {style:'currency', currency:'CLP'});
 
         window.showToast = (msg, type='success') => {
@@ -272,7 +236,6 @@
             const toast = new bootstrap.Toast(toastEl); toast.show();
         };
 
-        // --- AUTH & VISTAS ---
         window.toggleForms = () => {
             const l = document.getElementById('view-login'), r = document.getElementById('view-register');
             document.getElementById('login-error').classList.add('d-none');
@@ -312,36 +275,18 @@
             }
         });
 
-        // --- PRODUCTOS Y FILTROS ---
-        window.filtrarCategoria = (cat, btn) => {
-            filtroActual = cat;
-            actualizarBotonesFiltro(btn);
-            cargarProductos();
-        };
-
-        window.filtrarFavoritos = (btn) => {
-            filtroActual = 'favoritos';
-            actualizarBotonesFiltro(btn);
-            cargarProductos();
-        };
+        window.filtrarCategoria = (cat, btn) => { filtroActual = cat; actualizarBotonesFiltro(btn); cargarProductos(); };
+        window.filtrarFavoritos = (btn) => { filtroActual = 'favoritos'; actualizarBotonesFiltro(btn); cargarProductos(); };
 
         function actualizarBotonesFiltro(btnActivo) {
-            document.querySelectorAll('#category-filters button').forEach(b => { 
-                b.classList.remove('btn-dark','active','btn-danger'); 
-                if(b.innerText.includes('Favoritos')) b.classList.add('btn-outline-danger');
-                else b.classList.add('btn-outline-secondary'); 
-            });
+            document.querySelectorAll('#category-filters button').forEach(b => { b.classList.remove('btn-dark','active','btn-danger'); if(b.innerText.includes('Favoritos')) b.classList.add('btn-outline-danger'); else b.classList.add('btn-outline-secondary'); });
             btnActivo.classList.remove('btn-outline-secondary', 'btn-outline-danger');
-            if(filtroActual === 'favoritos') btnActivo.classList.add('btn-danger', 'active');
-            else btnActivo.classList.add('btn-dark', 'active');
+            if(filtroActual === 'favoritos') btnActivo.classList.add('btn-danger', 'active'); else btnActivo.classList.add('btn-dark', 'active');
         }
 
-        // --- LOGICA DE FAVORITOS ---
         window.toggleFav = (id) => {
-            if(favoritos.includes(id)) favoritos = favoritos.filter(fid => fid !== id);
-            else favoritos.push(id);
-            localStorage.setItem('favs', JSON.stringify(favoritos));
-            cargarProductos(); // Re-renderizar para ver cambios de icono
+            if(favoritos.includes(id)) favoritos = favoritos.filter(fid => fid !== id); else favoritos.push(id);
+            localStorage.setItem('favs', JSON.stringify(favoritos)); cargarProductos();
         };
 
         function cargarProductos() {
@@ -349,15 +294,11 @@
                 inventario = [];
                 const div = document.getElementById('product-container'); div.innerHTML = '';
                 const termino = document.getElementById('searchInput').value.toLowerCase();
-
                 snap.forEach(d => {
                     const p = {id:d.id, ...d.data()};
                     const esFav = favoritos.includes(p.id);
-                    
-                    // LÓGICA DE FILTRADO
                     const matchTexto = p.nombre.toLowerCase().includes(termino);
                     let matchFiltro = false;
-
                     if (filtroActual === 'todas') matchFiltro = true;
                     else if (filtroActual === 'favoritos') matchFiltro = esFav;
                     else matchFiltro = (p.categoria || 'Otros') === filtroActual;
@@ -368,8 +309,6 @@
                         const stockDisp = p.stock - enCarro;
                         const mejoras = p.mejoras ? `<div class="mejoras-tag"><i class="fas fa-star"></i> ${p.mejoras}</div>` : '';
                         const catLabel = `<div class="cat-tag mb-1">${p.categoria||'Otros'}</div>`;
-                        
-                        // Icono corazón
                         const heartClass = esFav ? "active fas fa-heart" : "inactive far fa-heart";
 
                         div.innerHTML += `
@@ -389,10 +328,7 @@
                                                 <input type="text" id="qty-${p.id}" class="form-control text-center bg-white" value="1" readonly>
                                                 <button class="btn btn-outline-secondary" onclick="window.cambiarCant('${p.id}', 1)">+</button>
                                             </div>
-                                            <button class="btn btn-sm w-100 fw-bold ${stockDisp<=0?'btn-secondary':'btn-primary'}" 
-                                                ${stockDisp<=0?'disabled':''} onclick="window.add('${p.id}')">
-                                                ${stockDisp<=0 ? 'Agotado' : 'Agregar'}
-                                            </button>
+                                            <button class="btn btn-sm w-100 fw-bold ${stockDisp<=0?'btn-secondary':'btn-primary'}" ${stockDisp<=0?'disabled':''} onclick="window.add('${p.id}')">${stockDisp<=0 ? 'Agotado' : 'Agregar'}</button>
                                         </div>
                                     </div>
                                 </div>
@@ -403,30 +339,12 @@
             });
         }
         
-        // --- LOGICA SUGERENCIAS ---
         window.abrirSugerencias = () => new bootstrap.Modal(document.getElementById('sugerenciasModal')).show();
-        
         document.getElementById('sugerencia-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const prod = document.getElementById('sug-producto').value;
-            try {
-                // Guardamos en colección 'sugerencias'
-                await addDoc(collection(db, "sugerencias"), {
-                    producto: prod,
-                    usuario: usuario.displayName,
-                    fecha: serverTimestamp()
-                });
-                window.showToast("¡Sugerencia enviada! Gracias.");
-                bootstrap.Modal.getInstance(document.getElementById('sugerenciasModal')).hide();
-                e.target.reset();
-            } catch(error) {
-                // Si falla por permisos, avisamos
-                console.error(error);
-                alert("Error al enviar. (Avisa al admin que active la colección 'sugerencias' en Firebase Rules)");
-            }
+            e.preventDefault(); const prod = document.getElementById('sug-producto').value;
+            try { await addDoc(collection(db, "sugerencias"), {producto: prod, usuario: usuario.displayName, fecha: serverTimestamp()}); window.showToast("Enviado"); bootstrap.Modal.getInstance(document.getElementById('sugerenciasModal')).hide(); e.target.reset(); } catch(error) { alert("Error"); }
         });
 
-        // --- RESTO DE FUNCIONES (Carrito, Cantidad, Checkout) ---
         window.cambiarCant = (id, d) => {
             const inp = document.getElementById('qty-'+id);
             let v = parseInt(inp.value) + d;
@@ -442,8 +360,7 @@
             const item = carrito.find(x=>x.id==id);
             if((item?.cantidad||0) + cant > p.stock) return window.showToast("Stock insuficiente", "danger");
             if(item) item.cantidad += cant; else carrito.push({id:p.id, nombre:p.nombre, precio:p.precio, cantidad:cant});
-            document.getElementById('qty-'+id).value = 1;
-            saveCart(); window.showToast("Agregado al carrito");
+            document.getElementById('qty-'+id).value = 1; saveCart(); window.showToast("Agregado al carrito");
         };
         window.del = (i) => { carrito.splice(i,1); saveCart(); };
         function saveCart() { localStorage.setItem('cart', JSON.stringify(carrito)); renderCart(); }
@@ -462,13 +379,25 @@
         
         window.finalizarCompra = async () => {
             const batch = writeBatch(db);
-            let total=0, msg=`*NUEVO PEDIDO MAQUIPAN*%0A👤 ${usuario.displayName}%0A%0A`;
+            let total=0, msg=`*PEDIDO MAQUIPAN*%0A👤 ${usuario.displayName}%0A%0A`;
             carrito.forEach(c => {
                 batch.update(doc(db, "productos", c.id), {stock: increment(-c.cantidad)});
                 total += c.precio*c.cantidad; msg += `📦 ${c.cantidad}x ${c.nombre}%0A`;
             });
             msg += `%0A💰 Total: ${clp.format(total)}`;
-            try { await batch.commit(); await addDoc(collection(db, "ventas"), {usuario: usuario.displayName, email: usuario.email, total, fecha: serverTimestamp(), detalle: carrito}); carrito=[]; saveCart(); cargarProductos(); bootstrap.Modal.getInstance(document.getElementById('cartModal')).hide(); window.reiniciarModal(); window.open(`https://wa.me/56966746344?text=${msg}`, '_blank'); } catch(e) { window.showToast("Error: "+e.message, "danger"); }
+            try { 
+                await batch.commit(); 
+                // AQUÍ GUARDAMOS pagado: false PARA QUE QUEDE COMO DEUDA
+                await addDoc(collection(db, "ventas"), {
+                    usuario: usuario.displayName, 
+                    email: usuario.email, 
+                    total, 
+                    pagado: false, // <-- IMPORTANTE: PENDIENTE DE PAGO
+                    fecha: serverTimestamp(), 
+                    detalle: carrito
+                }); 
+                carrito=[]; saveCart(); cargarProductos(); bootstrap.Modal.getInstance(document.getElementById('cartModal')).hide(); window.reiniciarModal(); window.open(`https://wa.me/56912345678?text=${msg}`, '_blank'); 
+            } catch(e) { window.showToast("Error: "+e.message, "danger"); }
         };
 
         window.abrirModalPassword = () => new bootstrap.Modal(document.getElementById('passwordModal')).show();
@@ -478,21 +407,63 @@
             try { await updatePassword(auth.currentUser, p1); window.showToast("Clave actualizada"); bootstrap.Modal.getInstance(document.getElementById('passwordModal')).hide(); } catch(e){ alert(e.message); }
         });
 
+        // --- LÓGICA DE DEUDA Y MIS PEDIDOS ---
         window.abrirMisPedidos = async () => {
             const listDiv = document.getElementById('orders-list');
+            const alertDiv = document.getElementById('debt-alert');
             listDiv.innerHTML = '<div class="text-center"><div class="spinner-border text-primary"></div></div>';
             new bootstrap.Modal(document.getElementById('ordersModal')).show();
+            
             const q = query(collection(db, "ventas"), where("email", "==", usuario.email), orderBy("fecha", "desc"));
             const qs = await getDocs(q);
-            if(qs.empty) { listDiv.innerHTML = '<p class="text-center text-muted">Sin historial.</p>'; return; }
+            
+            if(qs.empty) { listDiv.innerHTML = '<p class="text-center text-muted">Sin historial.</p>'; alertDiv.classList.add('d-none'); return; }
+            
             let html = '<div class="list-group">';
+            let deudaTotal = 0;
+
             qs.forEach((d) => {
-                const v = d.data(); const f = v.fecha ? v.fecha.toDate().toLocaleDateString() : '-';
-                html += `<div class="list-group-item"><div class="d-flex justify-content-between"><h6 class="mb-1 text-primary">Pedido ${f}</h6><span class="badge bg-success rounded-pill">${clp.format(v.total)}</span></div><small class="text-muted">${v.detalle.map(i=>`${i.cantidad}x ${i.nombre}`).join(', ')}</small></div>`;
+                const v = d.data();
+                const fecha = v.fecha ? v.fecha.toDate().toLocaleDateString() : '-';
+                const items = v.detalle.map(i=>`${i.cantidad}x ${i.nombre}`).join(', ');
+                
+                // CÁLCULO DE DEUDA Y ESTADO
+                const estaPagado = v.pagado === true; // Si es null o false, cuenta como deuda
+                let badge = '';
+                if(estaPagado) {
+                    badge = '<span class="badge bg-success rounded-pill">Pagado</span>';
+                } else {
+                    badge = '<span class="badge bg-danger rounded-pill">Pendiente</span>';
+                    deudaTotal += (v.total || 0);
+                }
+
+                html += `
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1 text-primary fw-bold">Pedido ${fecha}</h6>
+                                <div class="small">${badge}</div>
+                            </div>
+                            <span class="fs-5 fw-bold text-dark">${clp.format(v.total)}</span>
+                        </div>
+                        <small class="text-muted d-block mt-1">${items}</small>
+                    </div>`;
             });
-            listDiv.innerHTML = html + '</div>';
+            
+            html += '</div>';
+            listDiv.innerHTML = html;
+
+            // ACTUALIZAR ALERTA DE DEUDA
+            if (deudaTotal > 0) {
+                alertDiv.className = "alert alert-danger text-center mb-3 fw-bold";
+                alertDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> Tienes una deuda de: ${clp.format(deudaTotal)}`;
+                alertDiv.classList.remove('d-none');
+            } else {
+                alertDiv.className = "alert alert-success text-center mb-3";
+                alertDiv.innerHTML = `<i class="fas fa-check-circle"></i> ¡Estás al día! No tienes deuda.`;
+                alertDiv.classList.remove('d-none');
+            }
         };
     </script>
 </body>
 </html>
-
