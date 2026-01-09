@@ -11,8 +11,8 @@
 
     <div id="login-screen" class="container d-flex justify-content-center align-items-center vh-100">
         <div class="card shadow p-4" style="max-width: 400px; width: 100%;">
-            <div class="text-center mb-3"><i class="fas fa-wallet fa-3x text-primary"></i></div>
-            <h4 class="text-center mb-3">Administración</h4>
+            <div class="text-center mb-3"><i class="fas fa-user-shield fa-3x text-primary"></i></div>
+            <h4 class="text-center mb-3">Acceso Admin</h4>
             <form id="admin-login-form">
                 <input type="email" id="admin-user" class="form-control mb-2" placeholder="admin@maquipan.cl" required>
                 <input type="password" id="admin-pass" class="form-control mb-3" placeholder="Contraseña" required>
@@ -27,6 +27,7 @@
             <div class="container">
                 <a class="navbar-brand fw-bold text-warning" href="#"><i class="fas fa-coins"></i> Finanzas Maquipan</a>
                 <div class="d-flex align-items-center">
+                    <span id="admin-name-display" class="text-white me-3 small d-none d-md-inline"></span>
                     <button onclick="window.logout()" class="btn btn-outline-danger btn-sm me-2">Salir</button>
                     <a href="index.html" class="btn btn-outline-light btn-sm" target="_blank">Ver Kiosco</a>
                 </div>
@@ -36,46 +37,29 @@
         <div class="container pb-5">
             <div class="row mb-4 g-3">
                 <div class="col-md-4"><div class="card text-white bg-success h-100 shadow-sm"><div class="card-body"><h6>Dinero Recaudado (Pagado)</h6><h3 class="fw-bold" id="kpi-pagado">$0</h3></div></div></div>
-                <div class="col-md-4"><div class="card text-white bg-danger h-100 shadow-sm"><div class="card-body"><h6>Por Cobrar (Pendiente)</h6><h3 class="fw-bold" id="kpi-pendiente">$0</h3></div></div></div>
+                <div class="col-md-4"><div class="card text-white bg-danger h-100 shadow-sm"><div class="card-body"><h6>Por Cobrar (Fiado)</h6><h3 class="fw-bold" id="kpi-pendiente">$0</h3></div></div></div>
                 <div class="col-md-4"><div class="card text-white bg-info h-100 shadow-sm"><div class="card-body"><h6>Valor Inventario</h6><h3 class="fw-bold" id="kpi-valor">$0</h3></div></div></div>
             </div>
 
             <div class="card shadow-sm border-warning mb-4">
-                <div class="card-header bg-warning text-dark fw-bold">
-                    <i class="fas fa-cash-register"></i> Nueva Venta Manual
-                </div>
+                <div class="card-header bg-warning text-dark fw-bold"><i class="fas fa-cash-register"></i> Venta Manual (Oficina)</div>
                 <div class="card-body">
                     <div class="row g-2 align-items-end">
                         <div class="col-md-4">
                             <label class="small text-muted">Producto</label>
-                            <select id="manual-product-select" class="form-select">
-                                <option value="">Seleccione...</option>
-                            </select>
+                            <select id="manual-product-select" class="form-select"><option value="">Cargando productos...</option></select>
                         </div>
-                        <div class="col-md-2">
-                            <label class="small text-muted">Cantidad</label>
-                            <input type="number" id="manual-qty" class="form-control" value="1" min="1">
-                        </div>
-                        <div class="col-md-2">
-                            <button class="btn btn-dark w-100" onclick="window.agregarAlTicketManual()"><i class="fas fa-plus"></i> Agregar</button>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="small text-muted">Cliente</label>
-                            <input type="text" id="manual-client-name" class="form-control" placeholder="Nombre compañero">
-                        </div>
+                        <div class="col-md-2"><label class="small text-muted">Cant</label><input type="number" id="manual-qty" class="form-control" value="1" min="1"></div>
+                        <div class="col-md-2"><button class="btn btn-dark w-100" onclick="window.agregarAlTicketManual()"><i class="fas fa-plus"></i></button></div>
+                        <div class="col-md-4"><label class="small text-muted">Cliente</label><input type="text" id="manual-client-name" class="form-control" placeholder="Nombre compañero"></div>
                     </div>
-
                     <div class="table-responsive mt-3 border rounded">
-                        <table class="table table-sm table-striped mb-0">
-                            <thead class="table-light"><tr><th>Producto</th><th class="text-center">Cant.</th><th class="text-end">Subtotal</th><th></th></tr></thead>
-                            <tbody id="manual-cart-items"><tr><td colspan="4" class="text-center text-muted small py-2">Ticket vacío</td></tr></tbody>
-                        </table>
+                        <table class="table table-sm table-striped mb-0"><thead class="table-light"><tr><th>Producto</th><th class="text-center">Cant.</th><th class="text-end">Subtotal</th><th></th></tr></thead><tbody id="manual-cart-items"><tr><td colspan="4" class="text-center text-muted small py-2">Ticket vacío</td></tr></tbody></table>
                     </div>
-
                     <div class="d-flex justify-content-between align-items-center mt-3 bg-light p-3 rounded">
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="check-pagado" checked>
-                            <label class="form-check-label fw-bold" for="check-pagado">¿Pagado Inmediatamente?</label>
+                            <label class="form-check-label fw-bold" for="check-pagado">¿Pagado ahora?</label>
                         </div>
                         <div class="d-flex align-items-center">
                             <h4 class="mb-0 me-3">Total: <span id="manual-total" class="text-success fw-bold">$0</span></h4>
@@ -85,32 +69,19 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-lg-12 mb-4">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-header bg-white py-3">
-                            <div class="row align-items-center">
-                                <div class="col-md-6"><h5 class="mb-0 fw-bold text-primary">Historial y Cobranza</h5></div>
-                                <div class="col-md-6"><input type="text" id="search-sales" class="form-control" placeholder="Buscar por cliente..."></div>
-                            </div>
-                        </div>
-                        <div class="card-body p-0">
-                            <div class="table-responsive" style="height: 500px; overflow: auto;">
-                                <table class="table table-hover align-middle mb-0">
-                                    <thead class="table-light sticky-top">
-                                        <tr>
-                                            <th>Fecha</th>
-                                            <th>Cliente</th>
-                                            <th>Detalle</th>
-                                            <th class="text-end">Total</th>
-                                            <th class="text-center">Estado Pago</th>
-                                            <th class="text-end">Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="sales-table"><tr><td colspan="6" class="text-center py-3">Cargando...</td></tr></tbody>
-                                </table>
-                            </div>
-                        </div>
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <div class="row align-items-center">
+                        <div class="col-md-6"><h5 class="mb-0 fw-bold text-primary">Historial y Cobranza</h5></div>
+                        <div class="col-md-6"><input type="text" id="search-sales" class="form-control" placeholder="Buscar por cliente..."></div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive" style="height: 400px; overflow: auto;">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light sticky-top"><tr><th>Fecha</th><th>Cliente</th><th>Detalle</th><th class="text-end">Total</th><th class="text-center">Estado</th><th class="text-end">Acciones</th></tr></thead>
+                            <tbody id="sales-table"><tr><td colspan="6" class="text-center py-3">Cargando ventas...</td></tr></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -118,17 +89,17 @@
             <div class="accordion mb-4" id="accordionProd">
                 <div class="accordion-item">
                     <h2 class="accordion-header">
-                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProd">
+                        <button class="accordion-button collapsed fw-bold bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProd">
                             <i class="fas fa-boxes me-2"></i> Gestión de Inventario (Click para abrir)
                         </button>
                     </h2>
-                    <div id="collapseProd" class="accordion-collapse collapse" data-bs-parent="#accordionProd">
+                    <div id="collapseProd" class="accordion-collapse collapse show" data-bs-parent="#accordionProd">
                         <div class="accordion-body">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <div class="card bg-light border-0">
+                                    <div class="card border-0 bg-light mb-3">
                                         <div class="card-body">
-                                            <h6>Nuevo Producto</h6>
+                                            <h6 class="fw-bold">Editar / Crear</h6>
                                             <form id="product-form">
                                                 <input type="hidden" id="edit-id">
                                                 <input type="text" id="nombre" class="form-control mb-2" placeholder="Nombre" required>
@@ -140,11 +111,8 @@
                                                     <option value="Otros">Otros</option>
                                                 </select>
                                                 <input type="text" id="mejoras" class="form-control mb-2" placeholder="Detalle">
-                                                <div class="row g-2 mb-2">
-                                                    <div class="col"><input type="number" id="precio" class="form-control" placeholder="$" required></div>
-                                                    <div class="col"><input type="number" id="stock" class="form-control" placeholder="Cant" required></div>
-                                                </div>
-                                                <input type="url" id="img" class="form-control mb-2" placeholder="URL Img" required>
+                                                <div class="row g-2 mb-2"><div class="col"><input type="number" id="precio" class="form-control" placeholder="$" required></div><div class="col"><input type="number" id="stock" class="form-control" placeholder="Cant" required></div></div>
+                                                <input type="url" id="img" class="form-control mb-2" placeholder="URL Imagen" required>
                                                 <button type="submit" class="btn btn-dark w-100" id="btn-save">Guardar</button>
                                                 <button type="button" class="btn btn-secondary w-100 mt-2 d-none" id="btn-cancel" onclick="resetForm()">Cancelar</button>
                                             </form>
@@ -152,8 +120,11 @@
                                     </div>
                                 </div>
                                 <div class="col-md-8">
-                                    <div class="table-responsive" style="height: 300px; overflow: auto;">
-                                        <table class="table table-sm table-hover"><tbody id="products-table"></tbody></table>
+                                    <div class="table-responsive" style="height: 400px; overflow: auto;">
+                                        <table class="table table-sm table-hover align-middle">
+                                            <thead class="table-light sticky-top"><tr><th>Producto</th><th>Cat.</th><th>Stock</th><th>Precio</th><th>Acciones</th></tr></thead>
+                                            <tbody id="products-table"><tr><td colspan="5" class="text-center py-3">Cargando productos...</td></tr></tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
@@ -169,7 +140,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-warning">
-                    <h5 class="modal-title fw-bold">Editar Datos Venta</h5>
+                    <h5 class="modal-title fw-bold">Editar Venta</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -179,7 +150,7 @@
                         <div class="mb-3"><label>Total ($)</label><input type="number" id="sale-total" class="form-control fw-bold"></div>
                     </form>
                 </div>
-                <div class="modal-footer"><button type="button" class="btn btn-primary" onclick="window.guardarVentaEditada()">Guardar</button></div>
+                <div class="modal-footer"><button type="button" class="btn btn-primary" onclick="window.guardarVentaEditada()">Guardar Cambios</button></div>
             </div>
         </div>
     </div>
@@ -203,60 +174,103 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // --- IMPORTANTE: VERIFICA QUE TU CORREO ESTÉ AQUÍ ---
         const ADMIN_EMAILS = ["cpimentel@maquipan.cl", "admin@maquipan.cl"];
+        
         const clp = new Intl.NumberFormat('es-CL', {style:'currency', currency:'CLP'});
         let inventario = [], historialVentas = [], carritoManual = [];
 
-        // AUTH
+        // LOGIN
         document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             try { await signInWithEmailAndPassword(auth, document.getElementById('admin-user').value, document.getElementById('admin-pass').value); } 
-            catch(e) { document.getElementById('error-msg').classList.remove('d-none'); document.getElementById('error-msg').innerText = "Credenciales incorrectas"; }
+            catch(e) { document.getElementById('error-msg').classList.remove('d-none'); document.getElementById('error-msg').innerText = "Credenciales incorrectas: " + e.message; }
         });
         window.logout = () => signOut(auth).then(()=>location.reload());
 
         onAuthStateChanged(auth, (user) => {
-            if (user && ADMIN_EMAILS.includes(user.email)) {
+            // VERIFICACIÓN DE ADMIN MÁS FLEXIBLE PARA EVITAR ERRORES DE MAYÚSCULAS/MINÚSCULAS
+            if (user && ADMIN_EMAILS.some(email => email.toLowerCase() === user.email.toLowerCase())) {
                 document.getElementById('login-screen').classList.add('d-none');
                 document.getElementById('dashboard-screen').classList.remove('d-none');
+                document.getElementById('admin-name-display').innerText = user.email;
                 initApp();
-            } else if (user) { alert("Sin permisos"); signOut(auth); }
+            } else if (user) { 
+                alert("Tu correo (" + user.email + ") no tiene permisos de administrador."); 
+                signOut(auth); 
+            }
         });
 
         function initApp() {
-            // 1. PRODUCTOS
+            // 1. CARGA PRODUCTOS (CON PROTECCIÓN DE ERRORES)
             onSnapshot(collection(db, "productos"), (snap) => {
-                inventario = [];
-                let valor=0;
-                const tbody = document.getElementById('products-table'); 
-                const selectManual = document.getElementById('manual-product-select');
-                tbody.innerHTML = ''; selectManual.innerHTML = '<option value="">Seleccione...</option>';
+                try {
+                    inventario = [];
+                    let valor=0;
+                    const tbody = document.getElementById('products-table'); 
+                    const selectManual = document.getElementById('manual-product-select');
+                    
+                    if(tbody) tbody.innerHTML = ''; 
+                    if(selectManual) selectManual.innerHTML = '<option value="">Seleccione producto...</option>';
 
-                snap.forEach(d => {
-                    const p = { id: d.id, ...d.data() };
-                    inventario.push(p);
-                    valor += (p.precio * p.stock);
-                    tbody.innerHTML += `<tr><td>${p.nombre}</td><td>${p.stock}</td><td>${clp.format(p.precio)}</td><td class="text-end"><button class="btn btn-sm btn-primary py-0" onclick="window.editar('${p.id}')"><i class="fas fa-pen"></i></button> <button class="btn btn-sm btn-danger py-0" onclick="window.borrar('${p.id}')"><i class="fas fa-trash"></i></button></td></tr>`;
-                    if(p.stock > 0) selectManual.innerHTML += `<option value="${p.id}">${p.nombre} ($${p.precio}) - Stock: ${p.stock}</option>`;
-                });
-                document.getElementById('kpi-valor').innerText = clp.format(valor);
+                    snap.forEach(d => {
+                        const p = { id: d.id, ...d.data() };
+                        inventario.push(p);
+                        
+                        // Validamos que los datos existan para no romper la tabla
+                        const precio = p.precio || 0;
+                        const stock = p.stock || 0;
+                        const nombre = p.nombre || "Sin Nombre";
+                        const cat = p.categoria || "-";
+
+                        valor += (precio * stock);
+
+                        // Llenar tabla
+                        if(tbody) {
+                            tbody.innerHTML += `
+                                <tr class="${stock<5?'table-danger':''}">
+                                    <td>
+                                        <div class="fw-bold">${nombre}</div>
+                                        <small class="text-muted">${p.mejoras||''}</small>
+                                    </td>
+                                    <td><span class="badge bg-secondary">${cat}</span></td>
+                                    <td class="fw-bold">${stock}</td>
+                                    <td>${clp.format(precio)}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary py-0" onclick="window.editar('${p.id}')"><i class="fas fa-pen"></i></button> 
+                                        <button class="btn btn-sm btn-danger py-0" onclick="window.borrar('${p.id}')"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>`;
+                        }
+
+                        // Llenar Select Manual
+                        if(selectManual && stock > 0) {
+                            selectManual.innerHTML += `<option value="${p.id}">${nombre} ($${precio}) - Stock: ${stock}</option>`;
+                        }
+                    });
+                    document.getElementById('kpi-valor').innerText = clp.format(valor);
+                    document.getElementById('total-items-count').innerText = inventario.length;
+
+                } catch (error) {
+                    console.error("Error al mostrar productos:", error);
+                    alert("Error visualizando productos. Revisa la consola (F12) para más detalles.");
+                }
+            }, (error) => {
+                console.error("Error de permisos o conexión:", error);
+                alert("No se pudieron cargar los productos. Verifica tu conexión o permisos.");
             });
 
-            // 2. VENTAS (CON ESTADO DE PAGO)
+            // 2. CARGA VENTAS
             onSnapshot(query(collection(db, "ventas"), orderBy("fecha", "desc")), (snap) => {
                 historialVentas = [];
-                let totalPagado = 0, totalPendiente = 0;
+                let pagado=0, pendiente=0;
                 snap.forEach(d => { 
                     const v={id:d.id, ...d.data()}; 
                     historialVentas.push(v); 
-                    // Si el campo 'pagado' no existe (ventas viejas), asumimos true o false. 
-                    // Para seguridad financiera, si no existe lo tratamos como 'false' (Pendiente) para verificar.
-                    const estaPagado = v.pagado === true; 
-                    if(estaPagado) totalPagado += (v.total||0); else totalPendiente += (v.total||0);
+                    if(v.pagado === true) pagado += (v.total||0); else pendiente += (v.total||0);
                 });
-                
-                document.getElementById('kpi-pagado').innerText = clp.format(totalPagado);
-                document.getElementById('kpi-pendiente').innerText = clp.format(totalPendiente);
+                document.getElementById('kpi-pagado').innerText = clp.format(pagado);
+                document.getElementById('kpi-pendiente').innerText = clp.format(pendiente);
                 renderVentas(historialVentas);
             });
         }
@@ -265,144 +279,57 @@
         window.agregarAlTicketManual = () => {
             const id = document.getElementById('manual-product-select').value;
             const cant = parseInt(document.getElementById('manual-qty').value);
-            if(!id || cant < 1) return alert("Datos inválidos");
-            
+            if(!id || cant < 1) return alert("Selecciona un producto válido");
             const prod = inventario.find(p => p.id === id);
             const item = carritoManual.find(c => c.id === id);
-            if((item?item.cantidad:0) + cant > prod.stock) return alert("Stock insuficiente");
-
+            if((item?item.cantidad:0) + cant > prod.stock) return alert("No hay suficiente stock");
             if(item) item.cantidad += cant; else carritoManual.push({ id: prod.id, nombre: prod.nombre, precio: prod.precio, cantidad: cant });
-            document.getElementById('manual-qty').value = 1;
-            renderTicket();
+            document.getElementById('manual-qty').value = 1; renderTicket();
         };
-
         window.eliminarItemManual = (i) => { carritoManual.splice(i,1); renderTicket(); };
-
         function renderTicket() {
-            const tbody = document.getElementById('manual-cart-items');
-            let total = 0; tbody.innerHTML = '';
-            if(!carritoManual.length) { tbody.innerHTML='<tr><td colspan="4" class="text-center small py-2">Vacío</td></tr>'; }
-            else {
-                carritoManual.forEach((it, i) => {
-                    total += it.cantidad * it.precio;
-                    tbody.innerHTML += `<tr><td>${it.nombre}</td><td class="text-center">${it.cantidad}</td><td class="text-end">${clp.format(it.cantidad*it.precio)}</td><td class="text-end"><button class="btn btn-sm text-danger p-0" onclick="window.eliminarItemManual(${i})"><i class="fas fa-times"></i></button></td></tr>`;
-                });
-            }
+            const tbody = document.getElementById('manual-cart-items'); let total=0; tbody.innerHTML='';
+            if(!carritoManual.length) tbody.innerHTML='<tr><td colspan="4" class="text-center small">Vacío</td></tr>';
+            else carritoManual.forEach((it,i) => { total+=it.cantidad*it.precio; tbody.innerHTML+=`<tr><td>${it.nombre}</td><td class="text-center">${it.cantidad}</td><td class="text-end">${clp.format(it.cantidad*it.precio)}</td><td class="text-end"><button class="btn btn-sm text-danger p-0" onclick="window.eliminarItemManual(${i})"><i class="fas fa-times"></i></button></td></tr>`; });
             document.getElementById('manual-total').innerText = clp.format(total);
         }
-
         window.confirmarVentaManual = async () => {
             if(!carritoManual.length) return alert("Ticket vacío");
-            const cliente = document.getElementById('manual-client-name').value || "Mesón";
-            const pagadoAhora = document.getElementById('check-pagado').checked;
-            const batch = writeBatch(db);
-            let total = 0;
-
-            carritoManual.forEach(i => {
-                batch.update(doc(db, "productos", i.id), { stock: increment(-i.cantidad) });
-                total += i.precio * i.cantidad;
-            });
-
-            const nuevaVenta = doc(collection(db, "ventas"));
-            batch.set(nuevaVenta, {
-                usuario: cliente,
-                email: "venta@manual",
-                detalle: carritoManual,
-                total: total,
-                pagado: pagadoAhora, // GUARDAMOS SI PAGÓ O NO
-                fecha: serverTimestamp()
-            });
-
-            try { await batch.commit(); alert("Venta registrada"); carritoManual=[]; renderTicket(); document.getElementById('manual-client-name').value=""; }
-            catch(e) { alert("Error: "+e.message); }
+            const cliente = document.getElementById('manual-client-name').value || "Venta Mesón";
+            const batch = writeBatch(db); let total=0;
+            carritoManual.forEach(i => { batch.update(doc(db, "productos", i.id), { stock: increment(-i.cantidad) }); total+=i.precio*i.cantidad; });
+            batch.set(doc(collection(db, "ventas")), { usuario: cliente, email: "manual@admin", detalle: carritoManual, total: total, pagado: document.getElementById('check-pagado').checked, fecha: serverTimestamp() });
+            try { await batch.commit(); alert("Venta registrada"); carritoManual=[]; renderTicket(); document.getElementById('manual-client-name').value=""; } catch(e) { alert(e.message); }
         };
 
-        // --- HISTORIAL VENTAS Y TOGGLE PAGO ---
+        // --- VENTAS ---
         function renderVentas(lista) {
-            const tbody = document.getElementById('sales-table');
-            tbody.innerHTML = '';
+            const tbody = document.getElementById('sales-table'); tbody.innerHTML='';
             lista.forEach(v => {
-                const fecha = v.fecha ? v.fecha.toDate().toLocaleDateString() : '-';
-                const items = v.detalle ? v.detalle.map(i=>`${i.cantidad}x${i.nombre}`).join(', ') : '';
-                
-                // LÓGICA DE ESTADO
-                const pagado = v.pagado === true;
-                const badgeClass = pagado ? 'bg-success' : 'bg-danger';
-                const textoEstado = pagado ? 'Pagado' : 'Pendiente';
-                const btnIcon = pagado ? 'fa-undo' : 'fa-check';
-                const btnTitle = pagado ? 'Marcar Pendiente' : 'Marcar Pagado';
-                const btnColor = pagado ? 'btn-outline-secondary' : 'btn-success';
-
-                tbody.innerHTML += `
-                    <tr>
-                        <td class="small">${fecha}</td>
-                        <td class="fw-bold">${v.usuario}</td>
-                        <td class="small text-muted">${items}</td>
-                        <td class="text-end fw-bold">${clp.format(v.total)}</td>
-                        <td class="text-center"><span class="badge ${badgeClass}">${textoEstado}</span></td>
-                        <td class="text-end">
-                            <button class="btn btn-sm ${btnColor} me-1" onclick="window.togglePago('${v.id}', ${pagado})" title="${btnTitle}">
-                                <i class="fas ${btnIcon}"></i>
-                            </button>
-                            <button class="btn btn-sm btn-light border me-1" onclick="window.prepEdit('${v.id}')"><i class="fas fa-pen text-warning"></i></button>
-                            <button class="btn btn-sm btn-light border" onclick="window.borrarVenta('${v.id}')"><i class="fas fa-trash text-danger"></i></button>
-                        </td>
-                    </tr>`;
+                const f = v.fecha ? v.fecha.toDate().toLocaleDateString() : '-';
+                const i = v.detalle ? v.detalle.map(x=>`${x.cantidad}x${x.nombre}`).join(', ') : '';
+                const p = v.pagado===true;
+                tbody.innerHTML += `<tr><td class="small">${f}</td><td class="fw-bold">${v.usuario}</td><td class="small text-muted">${i}</td><td class="text-end fw-bold">${clp.format(v.total)}</td><td class="text-center"><span class="badge ${p?'bg-success':'bg-danger'}">${p?'Pagado':'Pendiente'}</span></td><td class="text-end"><button class="btn btn-sm ${p?'btn-outline-secondary':'btn-success'} me-1" onclick="window.togglePago('${v.id}', ${p})"><i class="fas ${p?'fa-undo':'fa-check'}"></i></button><button class="btn btn-sm btn-light border me-1" onclick="window.prepEdit('${v.id}')"><i class="fas fa-pen text-warning"></i></button><button class="btn btn-sm btn-light border" onclick="window.borrarVenta('${v.id}')"><i class="fas fa-trash text-danger"></i></button></td></tr>`;
             });
         }
+        window.togglePago = async (id, est) => { try { await updateDoc(doc(db, "ventas", id), { pagado: !est }); } catch(e) { alert(e.message); } };
+        window.borrarVenta = async (id) => { if(!confirm("¿Borrar y devolver stock?")) return; const r=doc(db,"ventas",id); const s=await getDoc(r); if(!s.exists()) return; const d=s.data(); const b=writeBatch(db); if(d.detalle) d.detalle.forEach(i=>b.update(doc(db,"productos",i.id),{stock:increment(i.cantidad)})); b.delete(r); await b.commit(); };
 
-        // --- CAMBIAR ESTADO DE PAGO ---
-        window.togglePago = async (id, estadoActual) => {
-            try {
-                await updateDoc(doc(db, "ventas", id), { pagado: !estadoActual });
-            } catch(e) { alert("Error al cambiar estado: " + e.message); }
-        };
-
-        // --- OTROS (Buscador, CRUD, etc.) ---
-        document.getElementById('search-sales').addEventListener('input', (e) => {
-            const t = e.target.value.toLowerCase();
-            const f = historialVentas.filter(v => (v.usuario||"").toLowerCase().includes(t));
-            renderVentas(f);
-        });
-
-        // CRUD Productos (Simplificado para ahorrar espacio, es igual al anterior)
+        // --- PRODUCTOS ---
         document.getElementById('product-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const id = document.getElementById('edit-id').value;
-            const data = {
-                nombre: document.getElementById('nombre').value,
-                categoria: document.getElementById('categoria').value,
-                mejoras: document.getElementById('mejoras').value,
-                precio: Number(document.getElementById('precio').value),
-                stock: Number(document.getElementById('stock').value),
-                img: document.getElementById('img').value
-            };
+            const data = { nombre: document.getElementById('nombre').value, categoria: document.getElementById('categoria').value, mejoras: document.getElementById('mejoras').value, precio: Number(document.getElementById('precio').value), stock: Number(document.getElementById('stock').value), img: document.getElementById('img').value };
             if(id) await updateDoc(doc(db, "productos", id), data); else await addDoc(collection(db, "productos"), data);
             resetForm();
         });
-        window.editar = (id) => {
-            const p = inventario.find(x => x.id === id);
-            document.getElementById('edit-id').value = p.id; document.getElementById('nombre').value = p.nombre; document.getElementById('categoria').value = p.categoria||""; document.getElementById('mejoras').value = p.mejoras||""; document.getElementById('precio').value = p.precio; document.getElementById('stock').value = p.stock; document.getElementById('img').value = p.img; document.getElementById('btn-save').innerText = "Actualizar"; document.getElementById('btn-cancel').classList.remove('d-none');
-        };
-        window.resetForm = () => { document.getElementById('product-form').reset(); document.getElementById('edit-id').value = ''; document.getElementById('btn-save').innerText = "Guardar"; document.getElementById('btn-cancel').classList.add('d-none'); };
+        window.editar = (id) => { const p=inventario.find(x=>x.id===id); document.getElementById('edit-id').value=p.id; document.getElementById('nombre').value=p.nombre; document.getElementById('categoria').value=p.categoria||""; document.getElementById('mejoras').value=p.mejoras||""; document.getElementById('precio').value=p.precio; document.getElementById('stock').value=p.stock; document.getElementById('img').value=p.img; document.getElementById('btn-save').innerText="Actualizar"; document.getElementById('btn-cancel').classList.remove('d-none'); };
+        window.resetForm = () => { document.getElementById('product-form').reset(); document.getElementById('edit-id').value=''; document.getElementById('btn-save').innerText="Guardar"; document.getElementById('btn-cancel').classList.add('d-none'); };
         window.borrar = async(id) => { if(confirm("¿Borrar?")) await deleteDoc(doc(db, "productos", id)); };
 
-        // Borrar Venta y Devolver Stock
-        window.borrarVenta = async (id) => {
-            if(!confirm("¿Eliminar venta y RESTAURAR STOCK?")) return;
-            try {
-                const vRef = doc(db, "ventas", id);
-                const vSnap = await getDoc(vRef);
-                if (!vSnap.exists()) return;
-                const vData = vSnap.data();
-                const batch = writeBatch(db);
-                if (vData.detalle) vData.detalle.forEach(i => batch.update(doc(db, "productos", i.id), { stock: increment(i.cantidad) }));
-                batch.delete(vRef);
-                await batch.commit(); alert("Eliminado.");
-            } catch (error) { alert(error.message); }
-        };
-
-        window.prepEdit = (id) => { const v = historialVentas.find(x => x.id === id); document.getElementById('sale-id').value = v.id; document.getElementById('sale-client').value = v.usuario; document.getElementById('sale-total').value = v.total; new bootstrap.Modal(document.getElementById('editSaleModal')).show(); };
+        // BUSCADOR Y EDIT VENTA
+        document.getElementById('search-sales').addEventListener('input', (e) => { const t=e.target.value.toLowerCase(); renderVentas(historialVentas.filter(v=>(v.usuario||"").toLowerCase().includes(t))); });
+        window.prepEdit = (id) => { const v=historialVentas.find(x=>x.id===id); document.getElementById('sale-id').value=v.id; document.getElementById('sale-client').value=v.usuario; document.getElementById('sale-total').value=v.total; new bootstrap.Modal(document.getElementById('editSaleModal')).show(); };
         window.guardarVentaEditada = async () => { await updateDoc(doc(db, "ventas", document.getElementById('sale-id').value), { usuario: document.getElementById('sale-client').value, total: Number(document.getElementById('sale-total').value) }); bootstrap.Modal.getInstance(document.getElementById('editSaleModal')).hide(); };
     </script>
 </body>
