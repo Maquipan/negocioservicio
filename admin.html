@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Dashboard Pro</title>
+    <title>Admin - Kiosco Maquipan</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -25,10 +25,10 @@
     <div id="dashboard-screen" class="d-none">
         <nav class="navbar navbar-dark bg-dark mb-4 sticky-top shadow">
             <div class="container">
-                <a class="navbar-brand fw-bold text-warning" href="#"><i class="fas fa-box-open"></i> Gestión Total</a>
+                <a class="navbar-brand fw-bold text-warning" href="#"><i class="fas fa-box-open"></i> Gestión Maquipan</a>
                 <div class="d-flex align-items-center">
                     <button onclick="window.logout()" class="btn btn-outline-danger btn-sm me-2">Salir</button>
-                    <a href="index.html" class="btn btn-outline-light btn-sm" target="_blank">Ver Tienda</a>
+                    <a href="index.html" class="btn btn-outline-light btn-sm" target="_blank">Ver Kiosco</a>
                 </div>
             </div>
         </nav>
@@ -51,11 +51,10 @@
                                 
                                 <div class="mb-2">
                                     <select id="categoria" class="form-select" required>
-                                        <option value="" disabled selected>Selecciona Categoría...</option>
+                                        <option value="" disabled selected>Categoría...</option>
                                         <option value="Bebidas">Bebidas</option>
                                         <option value="Snacks">Snacks</option>
-                                        <option value="Abarrotes">Abarrotes</option>
-                                        <option value="Limpieza">Limpieza</option>
+                                        <option value="Cafeteria">Cafetería</option>
                                         <option value="Otros">Otros</option>
                                     </select>
                                 </div>
@@ -70,7 +69,7 @@
                                 <button type="button" class="btn btn-secondary w-100 mt-2 d-none" id="btn-cancel" onclick="resetForm()">Cancelar</button>
                             </form>
                             <hr>
-                            <h6 class="fw-bold text-muted mt-3">Registrar Cliente</h6>
+                            <h6 class="fw-bold text-muted mt-3">Registrar Compañero</h6>
                             <form id="create-client-form" class="row g-2">
                                 <div class="col-12"><input type="text" id="new-name" class="form-control form-control-sm" placeholder="Nombre" required></div>
                                 <div class="col-6"><input type="email" id="new-email" class="form-control form-control-sm" placeholder="Email" required></div>
@@ -130,6 +129,7 @@
                         <input type="hidden" id="sale-id">
                         <div class="mb-3"><label>Cliente</label><input type="text" id="sale-client" class="form-control"></div>
                         <div class="mb-3"><label>Total ($)</label><input type="number" id="sale-total" class="form-control fw-bold"></div>
+                        <p class="text-muted small">Nota: Editar aquí solo cambia el texto, no el stock.</p>
                     </form>
                 </div>
                 <div class="modal-footer"><button type="button" class="btn btn-primary" onclick="window.guardarVentaEditada()">Guardar</button></div>
@@ -140,7 +140,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, updateDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        // AGREGAMOS: getDoc, writeBatch, increment (IMPORTANTES PARA DEVOLVER STOCK)
+        import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, updateDoc, doc, query, orderBy, getDoc, writeBatch, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = {
@@ -221,17 +222,53 @@
             lista.forEach(v => {
                 const items = v.detalle ? v.detalle.map(i=>`${i.cantidad}x${i.nombre}`).join(', ') : '';
                 const fecha = v.fecha ? v.fecha.toDate().toLocaleDateString() : '-';
-                tbody.innerHTML += `<tr><td class="small">${fecha}</td><td>${v.usuario}<br><small>${v.email}</small></td><td class="small text-muted">${items}</td><td class="text-end fw-bold text-success">${clp.format(v.total)}</td><td class="text-end"><button class="btn btn-sm btn-light border" onclick="window.prepEdit('${v.id}')"><i class="fas fa-pen text-warning"></i></button><button class="btn btn-sm btn-light border ms-1" onclick="window.delVenta('${v.id}')"><i class="fas fa-trash text-danger"></i></button></td></tr>`;
+                tbody.innerHTML += `<tr><td class="small">${fecha}</td><td>${v.usuario}<br><small>${v.email}</small></td><td class="small text-muted">${items}</td><td class="text-end fw-bold text-success">${clp.format(v.total)}</td><td class="text-end"><button class="btn btn-sm btn-light border" onclick="window.prepEdit('${v.id}')"><i class="fas fa-pen text-warning"></i></button><button class="btn btn-sm btn-light border ms-1" onclick="window.borrarVenta('${v.id}')"><i class="fas fa-trash text-danger"></i></button></td></tr>`;
             });
         }
 
-        // CRUD
+        // --- LÓGICA DE BORRADO DE VENTA CON DEVOLUCIÓN DE STOCK ---
+        window.borrarVenta = async (id) => {
+            if(!confirm("¿Eliminar esta venta y DEVOLVER EL STOCK a los productos?")) return;
+
+            try {
+                // 1. Obtener los detalles de la venta antes de borrar
+                const ventaRef = doc(db, "ventas", id);
+                const ventaSnap = await getDoc(ventaRef);
+
+                if (!ventaSnap.exists()) return alert("Error: La venta no existe.");
+
+                const ventaData = ventaSnap.data();
+                const batch = writeBatch(db); // Para ejecutar todo junto
+
+                // 2. Recorrer los productos y devolver stock
+                if (ventaData.detalle && Array.isArray(ventaData.detalle)) {
+                    ventaData.detalle.forEach(item => {
+                        const prodRef = doc(db, "productos", item.id);
+                        // increment(cantidad) suma la cantidad de vuelta al stock
+                        batch.update(prodRef, { stock: increment(item.cantidad) });
+                    });
+                }
+
+                // 3. Borrar la venta
+                batch.delete(ventaRef);
+
+                // 4. Ejecutar cambios
+                await batch.commit();
+                alert("Venta eliminada y stock restaurado exitosamente.");
+
+            } catch (error) {
+                console.error(error);
+                alert("Hubo un error al intentar devolver el stock: " + error.message);
+            }
+        };
+
+        // CRUD PRODUCTOS
         document.getElementById('product-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const id = document.getElementById('edit-id').value;
             const data = {
                 nombre: document.getElementById('nombre').value,
-                categoria: document.getElementById('categoria').value, // GUARDAMOS LA CATEGORÍA
+                categoria: document.getElementById('categoria').value,
                 mejoras: document.getElementById('mejoras').value,
                 precio: Number(document.getElementById('precio').value),
                 stock: Number(document.getElementById('stock').value),
@@ -246,7 +283,7 @@
             const p = inventario.find(x => x.id === id);
             document.getElementById('edit-id').value = p.id;
             document.getElementById('nombre').value = p.nombre;
-            document.getElementById('categoria').value = p.categoria || ""; // Cargar categoría
+            document.getElementById('categoria').value = p.categoria || "";
             document.getElementById('mejoras').value = p.mejoras || "";
             document.getElementById('precio').value = p.precio;
             document.getElementById('stock').value = p.stock;
@@ -262,7 +299,7 @@
             document.getElementById('btn-cancel').classList.add('d-none');
         };
 
-        window.borrar = async(id) => { if(confirm("¿Borrar?")) await deleteDoc(doc(db, "productos", id)); };
+        window.borrar = async(id) => { if(confirm("¿Borrar producto?")) await deleteDoc(doc(db, "productos", id)); };
         
         // VENTAS Y CLIENTES
         document.getElementById('search-sales').addEventListener('input', (e) => {
@@ -286,8 +323,6 @@
             });
             bootstrap.Modal.getInstance(document.getElementById('editSaleModal')).hide();
         };
-
-        window.delVenta = async(id) => { if(confirm("¿Borrar historial?")) await deleteDoc(doc(db, "ventas", id)); };
 
         document.getElementById('create-client-form').addEventListener('submit', async (e) => {
             e.preventDefault();
