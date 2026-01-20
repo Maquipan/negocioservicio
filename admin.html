@@ -322,7 +322,11 @@
                 tbody.innerHTML += `<tr><td class="small">${f}</td><td class="fw-bold">${v.usuario}</td><td class="small text-muted">${i}</td><td class="text-end fw-bold">${clp.format(v.total)}</td><td class="text-center"><span class="badge ${p?'bg-success':'bg-danger'}">${p?'Pagado':'Pendiente'}</span></td><td class="text-end"><button class="btn btn-sm ${p?'btn-outline-secondary':'btn-success'} me-1" onclick="window.togglePago('${v.id}', ${p})"><i class="fas ${p?'fa-undo':'fa-check'}"></i></button><button class="btn btn-sm btn-light border me-1" onclick="window.prepEdit('${v.id}')"><i class="fas fa-pen text-warning"></i></button><button class="btn btn-sm btn-light border" onclick="window.borrarVenta('${v.id}')"><i class="fas fa-trash text-danger"></i></button></td></tr>`;
             });
         }
-        window.togglePago = async (id, est) => { try { await updateDoc(doc(db, "ventas", id), { pagado: !est }); } catch(e) { alert(e.message); } };
+        window.togglePago = async (id, est) => { 
+    try { 
+        await updateDoc(doc(db, "ventas", id), { pagado: !est }); 
+    } catch(e) { alert(e.message); } 
+};
         window.borrarVenta = async (id) => { if(!confirm("¿Borrar y devolver stock?")) return; const r=doc(db,"ventas",id); const s=await getDoc(r); if(!s.exists()) return; const d=s.data(); const b=writeBatch(db); if(d.detalle) d.detalle.forEach(i=>b.update(doc(db,"productos",i.id),{stock:increment(i.cantidad)})); b.delete(r); await b.commit(); };
 
         // --- PRODUCTOS ---
