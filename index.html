@@ -388,14 +388,16 @@
             try { 
                 await batch.commit(); 
                 // AQUÍ GUARDAMOS pagado: false PARA QUE QUEDE COMO DEUDA
-                await addDoc(collection(db, "ventas"), {
-                    usuario: usuario.displayName, 
-                    email: usuario.email, 
-                    total, 
-                    pagado: false, // <-- IMPORTANTE: PENDIENTE DE PAGO
-                    fecha: serverTimestamp(), 
-                    detalle: carrito
-                }); 
+await addDoc(collection(db, "ventas"), {
+    usuario: usuario.displayName,      // Para compatibilidad con tu tabla de admin
+    usuario_nombre: usuario.displayName, // Para compatibilidad con el dashboard
+    email: usuario.email,              // Usado para filtrar "Mis Pedidos"
+    usuario_email: usuario.email,      // Para compatibilidad con el dashboard
+    total, 
+    pagado: false, 
+    fecha: serverTimestamp(), 
+    detalle: carrito
+});
                 carrito=[]; saveCart(); cargarProductos(); bootstrap.Modal.getInstance(document.getElementById('cartModal')).hide(); window.reiniciarModal(); window.open(`https://wa.me/56966746344?text=${msg}`, '_blank'); 
             } catch(e) { window.showToast("Error: "+e.message, "danger"); }
         };
@@ -414,7 +416,11 @@
             listDiv.innerHTML = '<div class="text-center"><div class="spinner-border text-primary"></div></div>';
             new bootstrap.Modal(document.getElementById('ordersModal')).show();
             
-            const q = query(collection(db, "ventas"), where("email", "==", usuario.email), orderBy("fecha", "desc"));
+            const q = query(
+    collection(db, "ventas"), 
+    where("email", "==", usuario.email), // Filtra solo las ventas del usuario actual
+    orderBy("fecha", "desc")
+);
             const qs = await getDocs(q);
             
             if(qs.empty) { listDiv.innerHTML = '<p class="text-center text-muted">Sin historial.</p>'; alertDiv.classList.add('d-none'); return; }
