@@ -6,6 +6,10 @@
     <title>Admin - Finanzas Maquipan</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .card-kpi { transition: transform 0.2s; }
+        .card-kpi:hover { transform: translateY(-5px); }
+    </style>
 </head>
 <body class="bg-light">
 
@@ -35,10 +39,51 @@
         </nav>
 
         <div class="container pb-5">
+            
             <div class="row mb-4 g-3">
-                <div class="col-md-4"><div class="card text-white bg-success h-100 shadow-sm"><div class="card-body"><h6>Dinero Recaudado (Pagado)</h6><h3 class="fw-bold" id="kpi-pagado">$0</h3></div></div></div>
-                <div class="col-md-4"><div class="card text-white bg-danger h-100 shadow-sm"><div class="card-body"><h6>Por Cobrar (Fiado)</h6><h3 class="fw-bold" id="kpi-pendiente">$0</h3></div></div></div>
-                <div class="col-md-4"><div class="card text-white bg-info h-100 shadow-sm"><div class="card-body"><h6>Valor Inventario</h6><h3 class="fw-bold" id="kpi-valor">$0</h3></div></div></div>
+                <div class="col-6 col-md-3">
+                    <div class="card text-white bg-success h-100 shadow-sm card-kpi">
+                        <div class="card-body p-3 text-center">
+                            <h6 class="small mb-1">Total Ingresos (Ventas)</h6>
+                            <h3 class="fw-bold" id="kpi-pagado">$0</h3>
+                            <small class="text-white-50">Acumulado histórico</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <div class="card text-white bg-secondary h-100 shadow-sm card-kpi">
+                        <div class="card-body p-3 text-center position-relative">
+                            <h6 class="small mb-1">Retiros / Transf.</h6>
+                            <h3 class="fw-bold" id="kpi-retiros">$0</h3>
+                            <button class="btn btn-light btn-sm w-100 mt-2 fw-bold" data-bs-toggle="modal" data-bs-target="#transferModal">
+                                <i class="fas fa-minus-circle text-danger"></i> Registrar Salida
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <div class="card text-white bg-primary h-100 shadow-sm card-kpi">
+                        <div class="card-body p-3 text-center">
+                            <h6 class="small mb-1"><i class="fas fa-wallet"></i> En Caja (Efectivo)</h6>
+                            <h3 class="fw-bold" id="kpi-caja">$0</h3>
+                            <small class="text-white-50" style="font-size: 0.75rem;">(Ingresos - Retiros)</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <div class="card text-white bg-danger h-100 shadow-sm card-kpi">
+                        <div class="card-body p-3 text-center">
+                            <h6 class="small mb-1">Por Cobrar (Fiado)</h6>
+                            <h3 class="fw-bold" id="kpi-pendiente">$0</h3>
+                            <button class="btn btn-light btn-sm w-100 mt-2 fw-bold" data-bs-toggle="modal" data-bs-target="#debtorsModal">
+                                <i class="fas fa-list-ul"></i> Ver Detalle
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="card shadow-sm border-warning mb-4">
@@ -111,7 +156,7 @@
                                                     <option value="Cafeteria">Cafetería</option>
                                                     <option value="Otros">Otros</option>
                                                 </select>
-                                                <input type="text" id="mejoras" class="form-control mb-2" placeholder="Detalle">
+                                                <input type="text" id="mejoras" class="form-control mb-2" placeholder="Detalle (opcional)">
                                                 <div class="row g-2 mb-2"><div class="col"><input type="number" id="precio" class="form-control" placeholder="$" required></div><div class="col"><input type="number" id="stock" class="form-control" placeholder="Cant" required></div></div>
                                                 <input type="url" id="img" class="form-control mb-2" placeholder="URL Imagen" required>
                                                 <button type="submit" class="btn btn-dark w-100" id="btn-save">Guardar</button>
@@ -156,6 +201,63 @@
         </div>
     </div>
 
+    <div class="modal fade" id="transferModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-secondary text-white">
+                    <h5 class="modal-title fw-bold">Registrar Salida de Dinero</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form-transferencia">
+                        <div class="mb-3">
+                            <label class="form-label">Monto a retirar/transferir</label>
+                            <input type="number" id="transf-monto" class="form-control fw-bold" placeholder="$" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Motivo / Destino</label>
+                            <input type="text" id="transf-desc" class="form-control" placeholder="Ej: Depósito a mi cuenta RUT" required>
+                        </div>
+                        <button type="submit" class="btn btn-dark w-100">Registrar Salida</button>
+                    </form>
+                    <hr>
+                    <h6 class="small text-muted fw-bold">Últimos 5 Retiros:</h6>
+                    <ul id="lista-ultimos-retiros" class="list-group small"><li class="list-group-item text-center">Cargando...</li></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="debtorsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-users"></i> Estado de Cuenta por Cliente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info small py-2 mb-3">
+                        <i class="fas fa-info-circle"></i> Aquí puedes ver el total histórico que ha comprado cada persona y cuánto deben actualmente.
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th class="text-end">Total Comprado (Histórico)</th>
+                                    <th class="text-end">Deuda Actual</th>
+                                </tr>
+                            </thead>
+                            <tbody id="debtors-table-body">
+                                <tr><td colspan="3" class="text-center">Calculando datos...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -179,7 +281,11 @@
         const ADMIN_EMAILS = ["cpimentel@maquipan.cl", "admin@maquipan.cl"];
         
         const clp = new Intl.NumberFormat('es-CL', {style:'currency', currency:'CLP'});
+        
+        // Variables Globales
         let inventario = [], historialVentas = [], carritoManual = [];
+        let totalIngresos = 0; 
+        let totalRetiros = 0;
 
         // LOGIN
         document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
@@ -190,7 +296,6 @@
         window.logout = () => signOut(auth).then(()=>location.reload());
 
         onAuthStateChanged(auth, (user) => {
-            // VERIFICACIÓN DE ADMIN
             if (user && ADMIN_EMAILS.some(email => email.toLowerCase() === user.email.toLowerCase())) {
                 document.getElementById('login-screen').classList.add('d-none');
                 document.getElementById('dashboard-screen').classList.remove('d-none');
@@ -203,11 +308,10 @@
         });
 
         function initApp() {
-            // 1. CARGA PRODUCTOS (CON PROTECCIÓN DE ERRORES)
+            // 1. CARGA PRODUCTOS
             onSnapshot(collection(db, "productos"), (snap) => {
                 try {
                     inventario = [];
-                    let valor=0;
                     const tbody = document.getElementById('products-table'); 
                     const selectManual = document.getElementById('manual-product-select');
                     
@@ -218,22 +322,15 @@
                         const p = { id: d.id, ...d.data() };
                         inventario.push(p);
                         
-                        // Validamos que los datos existan para no romper la tabla
                         const precio = p.precio || 0;
                         const stock = p.stock || 0;
                         const nombre = p.nombre || "Sin Nombre";
                         const cat = p.categoria || "-";
 
-                        valor += (precio * stock);
-
-                        // Llenar tabla
                         if(tbody) {
                             tbody.innerHTML += `
                                 <tr class="${stock<5?'table-danger':''}">
-                                    <td>
-                                        <div class="fw-bold">${nombre}</div>
-                                        <small class="text-muted">${p.mejoras||''}</small>
-                                    </td>
+                                    <td><div class="fw-bold">${nombre}</div><small class="text-muted">${p.mejoras||''}</small></td>
                                     <td><span class="badge bg-secondary">${cat}</span></td>
                                     <td class="fw-bold">${stock}</td>
                                     <td>${clp.format(precio)}</td>
@@ -243,45 +340,139 @@
                                     </td>
                                 </tr>`;
                         }
-
-                        // Llenar Select Manual
                         if(selectManual && stock > 0) {
                             selectManual.innerHTML += `<option value="${p.id}">${nombre} ($${precio}) - Stock: ${stock}</option>`;
                         }
                     });
-                    
-                    // SEGURIDAD: Verificar si los elementos existen antes de asignarles valor
-                    const kpiEl = document.getElementById('kpi-valor');
-                    if(kpiEl) kpiEl.innerText = clp.format(valor);
-                    
                     const countEl = document.getElementById('total-items-count');
                     if(countEl) countEl.innerText = inventario.length;
-
-                } catch (error) {
-                    console.error("Error al mostrar productos:", error);
-                }
-            }, (error) => {
-                console.error("Error de permisos o conexión:", error);
+                } catch (error) { console.error("Error al mostrar productos:", error); }
             });
 
-            // 2. CARGA VENTAS
+            // 2. CARGA VENTAS Y CALCULA TODO
             onSnapshot(query(collection(db, "ventas"), orderBy("fecha", "desc")), (snap) => {
                 historialVentas = [];
-                let pagado=0, pendiente=0;
+                totalIngresos = 0; 
+                let pendiente = 0;
+
                 snap.forEach(d => { 
-                    const v={id:d.id, ...d.data()}; 
+                    const v = {id:d.id, ...d.data()}; 
                     historialVentas.push(v); 
-                    if(v.pagado === true) pagado += (v.total||0); else pendiente += (v.total||0);
+                    
+                    if(v.pagado === true) totalIngresos += (v.total || 0);
+                    else pendiente += (v.total || 0);
                 });
                 
                 const kpiPag = document.getElementById('kpi-pagado');
                 const kpiPen = document.getElementById('kpi-pendiente');
-                if(kpiPag) kpiPag.innerText = clp.format(pagado);
+                if(kpiPag) kpiPag.innerText = clp.format(totalIngresos);
                 if(kpiPen) kpiPen.innerText = clp.format(pendiente);
                 
                 renderVentas(historialVentas);
+                actualizarTablaDeudores(); // NUEVO: Calcular reporte de usuarios
+                actualizarCaja();
+            });
+
+            // 3. CARGA TRANSFERENCIAS
+            onSnapshot(query(collection(db, "transferencias"), orderBy("fecha", "desc")), (snap) => {
+                totalRetiros = 0;
+                const listaUl = document.getElementById('lista-ultimos-retiros');
+                if(listaUl) listaUl.innerHTML = "";
+                let contador = 0;
+
+                snap.forEach(d => {
+                    const t = d.data();
+                    totalRetiros += (t.monto || 0);
+                    if(contador < 5 && listaUl) {
+                        const fecha = t.fecha ? t.fecha.toDate().toLocaleDateString() : '-';
+                        listaUl.innerHTML += `<li class="list-group-item d-flex justify-content-between align-items-center"><span>${t.descripcion} <span class="text-muted" style="font-size:0.8em">(${fecha})</span></span><span class="fw-bold text-danger">-${clp.format(t.monto)}</span><button class="btn btn-sm text-danger p-0 ms-2" onclick="window.borrarTransferencia('${d.id}')">x</button></li>`;
+                        contador++;
+                    }
+                });
+                const kpiRet = document.getElementById('kpi-retiros');
+                if(kpiRet) kpiRet.innerText = clp.format(totalRetiros);
+                actualizarCaja();
             });
         }
+
+        // --- NUEVA LÓGICA: REPORTE POR CLIENTE ---
+        function actualizarTablaDeudores() {
+            const clientes = {};
+
+            // 1. Agrupar ventas por nombre de usuario
+            historialVentas.forEach(v => {
+                const nombreRaw = v.usuario || "Anónimo";
+                // Normalizamos para que "Juan" y "juan" cuenten como el mismo
+                const key = nombreRaw.trim().toLowerCase(); 
+                const nombreBonito = nombreRaw.charAt(0).toUpperCase() + nombreRaw.slice(1);
+
+                if (!clientes[key]) {
+                    clientes[key] = { nombre: nombreBonito, totalComprado: 0, deuda: 0 };
+                }
+
+                clientes[key].totalComprado += (v.total || 0);
+                
+                if (!v.pagado) {
+                    clientes[key].deuda += (v.total || 0);
+                }
+            });
+
+            // 2. Convertir a lista y ordenar (Primero los que deben más)
+            const lista = Object.values(clientes).sort((a, b) => b.deuda - a.deuda);
+
+            // 3. Renderizar Tabla
+            const tbody = document.getElementById('debtors-table-body');
+            if(tbody) {
+                tbody.innerHTML = '';
+                if(lista.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="3" class="text-center">No hay clientes registrados</td></tr>';
+                }
+                
+                lista.forEach(c => {
+                    // Si debe dinero, pintamos la celda de rojo
+                    const claseDeuda = c.deuda > 0 ? "text-danger fw-bold" : "text-success";
+                    const iconoEstado = c.deuda > 0 ? '<i class="fas fa-exclamation-circle text-danger me-2"></i>' : '<i class="fas fa-check-circle text-success me-2"></i>';
+                    
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${iconoEstado}${c.nombre}</td>
+                            <td class="text-end text-muted">${clp.format(c.totalComprado)}</td>
+                            <td class="text-end ${claseDeuda}">${clp.format(c.deuda)}</td>
+                        </tr>
+                    `;
+                });
+            }
+        }
+
+        function actualizarCaja() {
+            const kpiCaja = document.getElementById('kpi-caja');
+            const saldoReal = totalIngresos - totalRetiros;
+            if(kpiCaja) {
+                kpiCaja.innerText = clp.format(saldoReal);
+                if(saldoReal < 0) {
+                    kpiCaja.parentElement.parentElement.classList.remove('bg-primary');
+                    kpiCaja.parentElement.parentElement.classList.add('bg-danger');
+                } else {
+                    kpiCaja.parentElement.parentElement.classList.add('bg-primary');
+                    kpiCaja.parentElement.parentElement.classList.remove('bg-danger');
+                }
+            }
+        }
+
+        // --- LÓGICA DE TRANSFERENCIAS ---
+        document.getElementById('form-transferencia').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const monto = parseInt(document.getElementById('transf-monto').value);
+            const desc = document.getElementById('transf-desc').value;
+            if (!monto || monto <= 0) return alert("Ingresa un monto válido");
+            try {
+                await addDoc(collection(db, "transferencias"), { monto: monto, descripcion: desc, usuario: document.getElementById('admin-name-display').innerText, fecha: serverTimestamp() });
+                document.getElementById('form-transferencia').reset();
+                bootstrap.Modal.getInstance(document.getElementById('transferModal')).hide();
+                alert("Retiro registrado correctamente");
+            } catch (error) { alert("Error: " + error.message); }
+        });
+        window.borrarTransferencia = async (id) => { if(confirm("¿Eliminar este registro de retiro?")) await deleteDoc(doc(db, "transferencias", id)); };
 
         // --- CAJA MANUAL ---
         window.agregarAlTicketManual = () => {
@@ -322,11 +513,7 @@
                 tbody.innerHTML += `<tr><td class="small">${f}</td><td class="fw-bold">${v.usuario}</td><td class="small text-muted">${i}</td><td class="text-end fw-bold">${clp.format(v.total)}</td><td class="text-center"><span class="badge ${p?'bg-success':'bg-danger'}">${p?'Pagado':'Pendiente'}</span></td><td class="text-end"><button class="btn btn-sm ${p?'btn-outline-secondary':'btn-success'} me-1" onclick="window.togglePago('${v.id}', ${p})"><i class="fas ${p?'fa-undo':'fa-check'}"></i></button><button class="btn btn-sm btn-light border me-1" onclick="window.prepEdit('${v.id}')"><i class="fas fa-pen text-warning"></i></button><button class="btn btn-sm btn-light border" onclick="window.borrarVenta('${v.id}')"><i class="fas fa-trash text-danger"></i></button></td></tr>`;
             });
         }
-        window.togglePago = async (id, est) => { 
-    try { 
-        await updateDoc(doc(db, "ventas", id), { pagado: !est }); 
-    } catch(e) { alert(e.message); } 
-};
+        window.togglePago = async (id, est) => { try { await updateDoc(doc(db, "ventas", id), { pagado: !est }); } catch(e) { alert(e.message); } };
         window.borrarVenta = async (id) => { if(!confirm("¿Borrar y devolver stock?")) return; const r=doc(db,"ventas",id); const s=await getDoc(r); if(!s.exists()) return; const d=s.data(); const b=writeBatch(db); if(d.detalle) d.detalle.forEach(i=>b.update(doc(db,"productos",i.id),{stock:increment(i.cantidad)})); b.delete(r); await b.commit(); };
 
         // --- PRODUCTOS ---
